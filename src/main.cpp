@@ -37,14 +37,15 @@ int main(int argc, char* argv[]) {
     where 'filename' is either the name of the inputted file, or 'out' when using std::cin  */
 
     std::string filename;  // stores name of inputted file
-    std::ofstream temp("temp.txt", std::ofstream::trunc);  // temp file that stores user input. deleted after the tree is built
+    char* tempFilename = "temp1234abcd.txt";  // filename for temp file that stores user input
+    std::ofstream temp;  // temp file that stores user input. deleted after the tree is built
     bool changeOutFilename = false;  // if flagged, will change the output file names to "out.xxxorder"
 
     // message to user
     std::cout   << "* * * * * * * * * * * * * * * * * * * * \n"
                 << "Project 0 \n"
                 << "\n" 
-                << "Takes in one file as an argument, otherwise it reads in user input.\n\n";
+                << "Takes in one file as an argument, otherwise it reads in user input from keyboard.\n\n";
 
     // check for command line arguments
     int numberOfFiles = argc - 1;
@@ -53,7 +54,7 @@ int main(int argc, char* argv[]) {
         // when there is more than one argument provided, display an error message and halt
 
         std::cerr   << "ERROR: invalid number of arguments." 
-                    << "\nInput should be provided from one file as a commandline argument, or from the keyboard with no arguments."
+                    << "\nInput should be provided from one file as a command-line argument, or from the keyboard with no arguments."
                     << "\nExiting program." << std::endl;
         return 1;
     }
@@ -69,10 +70,12 @@ int main(int argc, char* argv[]) {
         // and set the filename as 'out'
 
         // message to user
-        std::cout   << "Reading user input. The program will read until the user enters \"ctr + d\" (\"ctr + z\" on Windows).\n"
-                    << "Reading input:\n";
+        std::cout   << "Reading user input. The program will read until the user enters \"ctr + d\" (\"ctr + z\" on Windows). \n\n"
+                    << "Reading user input:\n";
         
-        filename = "temp.txt";  // filename where traversals will be exported
+        // open and write to the temporary file
+        temp.open(tempFilename, std::fstream::trunc);  
+        filename = tempFilename;
         changeOutFilename = true;  // flag to make sure filename is changed to "out.xxxorder"
         std::string line;  // string that holds getline input
         while (std::getline(std::cin, line)) {
@@ -83,18 +86,30 @@ int main(int argc, char* argv[]) {
         temp.close();
     }
 
-    // open the target file
+    // attempt to open the target file and validate its contents
     std::ifstream file(filename);
+    if (!file.is_open()) {
+        // give an error message if file doesn't exist or just won't open
 
+        std::cerr << "ERROR: File: \"" << filename << "\" won't open or doesn't exist. \n" << "Exiting program. \n";
+        return 1;
+    }
+
+    // time to validate
+    std::cout << "Validating user input... \n";
     if (!isValidInput(file)) {
         // validate the input file's characters and halt if there's an unnacceptable symbol
 
         std::cerr << "ERROR: File validation unsuccessful. \n" << "Exiting program.\n";
         return 1;
     }
-    else std::cout << "validated\n";
+    else {
+        // we're dandy. moving on
 
-    // create the binary tree using data read from the input file
+        std::cout << "Successfully validated! \n";
+    }
+
+    // if file is valid, create the binary tree using data read from the input file
     std::cout << "Creating binary tree with data from \"" << filename << "\".\n";
     node_t* root = buildTree(file);
     file.close();  // close the opened file
@@ -102,11 +117,11 @@ int main(int argc, char* argv[]) {
     if (changeOutFilename) {
         // delete the temporary user input file and rename the output files
 
-        if (std::remove("temp.txt") == 0) {
+        if (std::remove(tempFilename) == 0) {
             std::cout << "Temporary file successfully deleted.\n";
         }
         else {
-            std::cerr << "ERROR: Could not delete \"temp.txt\".\n" << "Exiting program.\n";
+            std::cerr << "ERROR: Could not delete temporary input file. \n" << "Exiting program.\n";
         }
         filename = "out";
     }
@@ -175,7 +190,6 @@ bool isValidInput(std::ifstream& iFile) {
     */
 
     std::string line;  // line that we will use to get text from the file source
-    std::cout << "\nIsValidInput\n";
     
     if (!iFile.is_open()) {
         // unable to validate input if the file won't open. halt the program
@@ -195,6 +209,8 @@ bool isValidInput(std::ifstream& iFile) {
         
         for (int i = 0; i < line.length(); i++) {
             // use cctype to parse every character in the current line
+            /* i know this could've been done with less lines of code, but i thought this
+            would be easier to read and follow along with */
 
             char character = line[i];
             int ascii = static_cast<int>(character);  // gets the ascii value of the char
@@ -206,18 +222,20 @@ bool isValidInput(std::ifstream& iFile) {
             }
             else if (ascii >= 33 && ascii <= 43) {
                 // continues loop if character is one of the accepted punctation characters
-
+                
                 continue;
             }
             else {
-                // halt the program with a message about the unacceptable character
+                // halt the program with a message about which unacceptable character was found
 
-                std::cout << "Unacceptable character found: " << character << "\n";
+                std::cout << "Unacceptable character found: \"" << character << "\"\n";
                 return false;
             }
         }
     }
     
-    // everything is acceptable, so return true
+    // every character is acceptable; reset the file to the beginning and return true
+    iFile.clear();  
+    iFile.seekg(0);
     return true;
 }
