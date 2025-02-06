@@ -1,0 +1,12 @@
+README
+
+Gavin Dennis
+CS 4280
+Project 0 
+
+Resources and documentation can be found in each .cpp file in the 'src' directory.
+
+How to compile:
+    1. make sure you are in the Project-0 directory
+    2. in the terminal, run the "make" command to compile the programs
+    3. the finished executuble 'P0' can be found in the 'build' directory (Project-0/build)
