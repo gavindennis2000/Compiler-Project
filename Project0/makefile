@@ -41,8 +41,7 @@ build/traversals.o: src/traversals.cpp
 
 # clean command: clears the build folder
 clean: 
-	rm $(OBJS) $(TARGET)
-	rmdir ./build
+	rm -r ./build
 
 # test command: makes and runs the executable with no file argument
 test: $(TARGET)

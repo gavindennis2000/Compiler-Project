@@ -5,6 +5,11 @@
     CS 4280-001
     Gavin Dennis 
 
+    gets input from the user from either the command-line or cin; validates input;
+    uses the input to create a binary tree structure; then traverses the tree using
+    pre-order, post-order, and level-order traversal while outputting the results into
+    the three respective files.
+
     resources consulted:
         w3 schools
             std::cerr documentation: https://www.w3schools.com/cpp/ref_iostream_cerr.asp
@@ -37,11 +42,12 @@ int main(int argc, char* argv[]) {
     where 'filename' is either the name of the inputted file, or 'out' when using std::cin  */
 
     std::string filename;  // stores name of inputted file
-    char* tempFilename = "temp1234abcd.txt";  // filename for temp file that stores user input
+    // note: this is not the ideal way to create a temporary file in c++, but for this use case it is simpler and was okayed by the instructor
+    char* tempFilename = "temp1234abcd.txt";  // filename for temp file that stores user input.
     std::ofstream temp;  // temp file that stores user input. deleted after the tree is built
     bool changeOutFilename = false;  // if flagged, will change the output file names to "out.xxxorder"
 
-    // message to user
+    // intro message to user
     std::cout   << "* * * * * * * * * * * * * * * * * * * * \n"
                 << "Project 0 \n"
                 << "\n" 
