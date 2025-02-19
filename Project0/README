@@ -9,4 +9,14 @@ Resources and documentation can be found in each .cpp file in the 'src' director
 How to compile:
     1. make sure you are in the Project-0 directory
     2. in the terminal, run the "make" command to compile the programs
-    3. the finished executuble 'P0' can be found in the 'build' directory (Project-0/build)
+    3. Optionally, run the following commands to execute the program with the following
+       test cases:
+	* make test1 - runs P0 with tests/P0_test1 as argument
+	* make test2 - runs P0 with tests/P0_test2 as argument
+	* make test3 - runs P0 with tests/P0_test3 as argument
+	* make test4 - runs P0 with tests/P0_test4 as argument
+	* make testGavin - runs P0 with tests/P0_testGavin as argument
+    4. the finished executuble 'P0' can be found in the 'build' directory (Project-0/build)
+    5. the tree traversals can be found in the same directory as the tests that are used
+       as an argument. For instance, the traversals for the test cases can be found in 
+       ./tests/.  If reading from stdin, it will be in the user directory.
