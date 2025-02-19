@@ -102,7 +102,7 @@ int main(int argc, char* argv[]) {
     }
 
     // time to validate
-    std::cout << "Validating user input... \n";
+    std::cout << "\nValidating user input... \n";
     if (!isValidInput(file)) {
         // validate the input file's characters and halt if there's an unnacceptable symbol
 
@@ -116,7 +116,7 @@ int main(int argc, char* argv[]) {
     }
 
     // if file is valid, create the binary tree using data read from the input file
-    std::cout << "Creating binary tree with data from \"" << filename << "\".\n";
+    std::cout << "Creating binary tree using input data.\n";
     node_t* root = buildTree(file);
     file.close();  // close the opened file
 
