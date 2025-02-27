@@ -1,0 +1,34 @@
+README
+
+Gavin Dennis
+CS 4280
+Project 1 
+
+I have decided to put all resources and documentation in this file instead of on the individual
+.cpp and .h files. This is to reduce clutter and improve organization.
+
+Resources and documentation:
+    W3 Schools
+        Enum documentation: https://www.w3schools.com/cpp/cpp_enum.asp
+
+How to compile:
+    1. make sure you are in the Gavin-Dennis-P1 directory
+    2. in the terminal, run the "make" command to compile the programs
+    3. Optionally, run the following commands to execute the program with the following
+       test cases:
+    * make test - runs P1 with tests/P1_test (a file that doesn't exist) as an argument
+	* make test1 - runs P1 with tests/P1_test1 as argument
+	* make test1e - runs P1 with tests/P1_test1e as argument
+	* make test2 - runs P1 with tests/P1_test2 as argument
+	* make test3 - runs P1 with tests/P1_test3 as argument
+	* make test4 - runs P1 with tests/P1_test4 as argument
+	* make testGavin - runs P1 with tests/P1_testGavin as argument
+    4. the finished executuble 'P1' can be found in the 'build' directory (Gavin-Dennis-P1/build/)
+
+Tests:
+    P1_test1.txt - one valid token 
+    P1_test1e.txt - one invalid token 
+    P1_test2.txt - a list with at least one of each token type, separated by spaces/new lines 
+    P1_test3.txt - similar to test2 but with the whitespaces removed 
+    P1_test4.txt - similar to test2 but with comments and blank lines added 
+	P1_testGavin - my personal test case, longer and more complicated than the previous
