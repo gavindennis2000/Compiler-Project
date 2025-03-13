@@ -5,6 +5,9 @@
     CS 4280-001
     Gavin Dennis 
 
+    Documentation/resources, test cases, and compilation instructions can be found
+    in the README.
+
     Gets input from the user from either the command-line or cin; validates input;
     provides input to testScanner, which iteratively gives scanner one token at a time
     until eof, and prints out each token.
@@ -27,7 +30,7 @@ int main(int argc, char* argv[]) {
     Then passes it to testScanner which provides one token at a time to scanner. */
 
     std::string filename;  // stores name of inputted file
-    char* tempFilename = "tempUserInput.txt";  // filename for temp file that stores user input.
+    std::string tempFilename = "tempUserInput.txt";  // filename for temp file that stores user input.
     std::ofstream temp;  // temp file that stores user input. deleted after the tree is built
 
     // intro message to user
@@ -90,8 +93,8 @@ int main(int argc, char* argv[]) {
     file.close();
 
     // remove the temp user input file if it exists
-    if (std::remove(tempFilename) == 0) {
-        std::cout << "Temporary file successfully deleted.\n";
+    if (std::remove(tempFilename.c_str()) == 0) {
+        std::cout << "Successfully deleted temp input file";
     }
 
     // the program is finished!

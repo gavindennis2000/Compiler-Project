@@ -13,7 +13,8 @@ void testScanner(std::ifstream& file) {
     /* opens file provided as argument, parses*/
 
     std::string word;
-    while (file >> word) {
-        std::cout << word;
+    char ch;
+    while (file.get(ch)) {
+        std::cout << ch << " ";
     }
 }

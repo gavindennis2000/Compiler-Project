@@ -2,7 +2,7 @@ README
 
 Gavin Dennis
 CS 4280
-Project 1 
+Project 1
 
 I have decided to put all resources and documentation in this file instead of on the individual
 .cpp and .h files. This is to reduce clutter and improve organization.
@@ -12,7 +12,7 @@ Resources and documentation:
         Enum documentation: https://www.w3schools.com/cpp/cpp_enum.asp
 
 How to compile:
-    1. make sure you are in the Gavin-Dennis-P1 directory
+    1. make sure you are in the "Gavin-Dennis-P1/" directory
     2. in the terminal, run the "make" command to compile the programs
     3. Optionally, run the following commands to execute the program with the following
        test cases:
@@ -25,10 +25,13 @@ How to compile:
 	* make testGavin - runs P1 with tests/P1_testGavin as argument
     4. the finished executuble 'P1' can be found in the 'build' directory (Gavin-Dennis-P1/build/)
 
-Tests:
+Test cases:
     P1_test1.txt - one valid token 
     P1_test1e.txt - one invalid token 
     P1_test2.txt - a list with at least one of each token type, separated by spaces/new lines 
     P1_test3.txt - similar to test2 but with the whitespaces removed 
     P1_test4.txt - similar to test2 but with comments and blank lines added 
 	P1_testGavin - my personal test case, longer and more complicated than the previous
+
+    Tests 2, 3, and 4 are different, but should yield the same output with the exception
+    of the line number.

@@ -48,6 +48,26 @@ clean:
 test: $(TARGET)
 	./build/P1
 
-# testGavin command: makes and runs the executable with P1_testGavin as an argument
+# none command: makes and runs the executable with nonexistant file (P1_test1) as an argument
+test1: $(TARGET)
+	./build/P1 tests/P1_test1
+
+# test1 command: makes and runs the executable with P1_test1.txt as an argument
+test1: $(TARGET)
+	./build/P1 tests/P1_test1.txt
+
+# test1e command: makes and runs the executable with P1_test1e.txt as an argument
+test1e: $(TARGET)
+	./build/P1 tests/P1_test1e.txt
+
+# test2 command: makes and runs the executable with P1_test2.txt as an argument
+test2: $(TARGET)
+	./build/P1 tests/P1_test2.txt
+
+# test3 command: makes and runs the executable with P1_test3.txt as an argument
+test3: $(TARGET)
+	./build/P1 tests/P1_test3.txt
+
+# testGavin command: makes and runs the executable with P1_testGavin.txt as an argument
 testGavin: $(TARGET)
-	./build/P1 tests/P1_testGavin
+	./build/P1 tests/P1_testGavin.txt
