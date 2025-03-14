@@ -75,3 +75,7 @@ test4: $(TARGET)
 # testGavin command: makes and runs the executable with P1_testGavin.txt as an argument
 testGavin: $(TARGET)
 	./build/P1 tests/P1_testGavin.txt
+
+# debug command: runs with GNU Debugger
+debug: $(TARGET)
+	gdb ./build/P1

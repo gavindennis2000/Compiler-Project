@@ -93,10 +93,9 @@ int main(int argc, char* argv[]) {
     file.close();
 
     // remove the temp user input file if it exists
-    if (std::remove(tempFilename.c_str()) == 0) {
-        std::cout << "Successfully deleted temp input file";
-    }
+    std::remove(tempFilename.c_str());
 
     // the program is finished!
+    std::cout << "\n" << "Program is finished.\n";
     return 0;
 }

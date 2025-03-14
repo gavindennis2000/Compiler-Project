@@ -17,7 +17,6 @@ void printToken(token tok) {
     token type, its string, and its line number */
 
     // get the token type
-    std::cout << "tokenID is: " << tok.tokenID << " t1_tk is: " << t1_tk << "\n";
     std::string tokenTypeStr;
     switch (tok.tokenID) {
         case t1_tk:
@@ -32,41 +31,49 @@ void printToken(token tok) {
         case EOF_tk:
             tokenTypeStr = "EOFTk";
             break;
-        default:
-            // invalid tokens
-            tokenTypeStr = "invalid"; 
-            break;
     }
-    if (tokenTypeStr == "invalid") {
-        std::cout << "\nInvalid token\n";
-    }
+
+    // output the token description
     std::cout << tokenTypeStr << "\t" << tok.tokenStr << "\t" << tok.lineNum << "\n";
 
     return;
 }
 
-void scanIfReady(std::string& stringArg, int lineNumber) {
+void scanIfReady(std::string& stringArg, int lineNumber, bool eofReached = false) {
     /* this is ran when end of line is reached or the comment flag is set.
     checks if stringArg has contents, and if it does, feeds it to the scanner
     iteratively until it is empty. */
 
-    while (stringArg != "") {
+    while (stringArg != "" || eofReached) {
         /* before setting the comment flag, if there is a string in the buffer, 
         give it to the scanner before setting the flag and continuing */
 
+        // set the lookahead and make sure it's not a space
         char lookahead = stringArg[0];
-        std::cout << "\nString sent: " << stringArg << "\n";
+        while (lookahead == ' ') {
+            stringArg.erase(0, 1);
+            lookahead = stringArg[0];
+            
+        }
+
+        // make sure empty lookaheads due to comments don't trigger an
+        // eof token
+        if (lookahead == '\0' && !eofReached) {
+            break;
+        }
+        // run the scanner
         token tok = FADriver(stringArg, lineNumber, lookahead);
         
         // print the returned token
         printToken(tok);
 
+        // if eof reached, break out of while loop
+        if (tok.tokenID == EOF_tk) {
+            break;
+        }
+
         // remove token string from stringArg, then loop the scanner til stringArg is empty
-        int amountToErase = tok.tokenStr.length();
-        // if lookahead was a space, the amount to erase will be one greater than expected
-        if (lookahead == ' ') { amountToErase++; }
         stringArg.erase(0, tok.tokenStr.length());
-        std::cout << "\nAfter erasure: " << stringArg << "\n";
     }
 
     return;
@@ -121,8 +128,18 @@ void testScanner(std::ifstream& file) {
 
         // run the scanner after every line if stringArg has contents
         scanIfReady(stringArg, lineNumber);
+
+        // check if file has ended
+        if (file.eof()) {
+            scanIfReady(stringArg, lineNumber, true);
+        }
+
+        // increment line number
+        lineNumber++;
     }
 
     // run the scanner one more time for the empty file token
-    scanIfReady(stringArg, lineNumber);
+    // scanIfReady(stringArg, lineNumber);
+
+    
 }

@@ -99,17 +99,18 @@ int getLookaheadValue(char lookahead) {
         return 3;
     }
 
-    // eof #TODO
-
     // +
     else if (lookahead == '+') {
         return 5;
     }
+
+    // eof
+    return 4;
 }
 
 void invalidTokenError(std::string fileStr, int lineNum) {
     /* displays a message when handling an invalid token then halts */
 
-    std::cout << "SCANNER ERROR: \"" << fileStr << "\"\t" << lineNum << "\n" << "Terminating program.\n";
+    std::cout << "SCANNER ERROR:" << "\t" << fileStr << "\t" << lineNum << "\n" << "Terminating program.\n";
     exit(EXIT_FAILURE);
 }

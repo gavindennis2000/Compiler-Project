@@ -9,7 +9,7 @@
 #define TESTSCANNER_H
 
 void printToken(token tok);
-void scanIfReady(std::string& stringArg, int lineNumber);
+void scanIfReady(std::string& stringArg, int lineNumber, bool eofReached);
 void testScanner(std::ifstream& file);
 
 #endif
