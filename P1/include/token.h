@@ -15,8 +15,9 @@ enum tokenType {
         t2_tk - begin with a single '+', followed by one or more digits (e.g. +34)
         t3_tk - begin with a single letter followed by one or more digits (e.g. z421)
         EOF_tk - signifies end of file
+        invalid - signifies that lookahead is an invalid character
     */
-   t1_tk, t2_tk, t3_tk, EOFtk
+   t1_tk, t2_tk, t3_tk, EOF_tk, invalid
 };
 
 struct token {

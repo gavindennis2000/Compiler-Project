@@ -10,6 +10,11 @@ I have decided to put all resources and documentation in this file instead of on
 Resources and documentation:
     W3 Schools
         Enum documentation: https://www.w3schools.com/cpp/cpp_enum.asp
+    CPlusPlus.com
+        Fstream::get documentation: https://cplusplus.com/reference/istream/istream/get/token
+        String class documentation: https://cplusplus.com/reference/string/string/
+    Stack Overflow
+        Solution for checking eof with getline: https://stackoverflow.com/questions/2251433/checking-for-eof-in-stringgetline
 
 How to compile:
     1. make sure you are in the "Gavin-Dennis-P1/" directory

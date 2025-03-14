@@ -49,7 +49,7 @@ test: $(TARGET)
 	./build/P1
 
 # none command: makes and runs the executable with nonexistant file (P1_test1) as an argument
-test1: $(TARGET)
+none: $(TARGET)
 	./build/P1 tests/P1_test1
 
 # test1 command: makes and runs the executable with P1_test1.txt as an argument
@@ -67,6 +67,10 @@ test2: $(TARGET)
 # test3 command: makes and runs the executable with P1_test3.txt as an argument
 test3: $(TARGET)
 	./build/P1 tests/P1_test3.txt
+
+# test4 command: makes and runs the executable with P1_test3.txt as an argument
+test4: $(TARGET)
+	./build/P1 tests/P1_test4.txt
 
 # testGavin command: makes and runs the executable with P1_testGavin.txt as an argument
 testGavin: $(TARGET)
