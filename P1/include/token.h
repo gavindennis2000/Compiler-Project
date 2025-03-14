@@ -1,7 +1,7 @@
 /*
     token.h 
 
-    declares the token struct and its members
+    Declares the token struct and its members.
 */
 
 #ifndef TOKEN_H
@@ -17,14 +17,14 @@ enum tokenType {
         EOF_tk - signifies end of file
         invalid - signifies that lookahead is an invalid character
     */
-   t1_tk, t2_tk, t3_tk, EOF_tk, invalid
+   t1_tk, t2_tk, t3_tk, EOF_tk
 };
 
 struct token {
     // token data type with specific ID, string instance, and the
     // associated line number
 
-    tokenType tokenID;
+    tokenType tokenID;  // each token can be one of the enum types listed above
     std::string tokenStr;  // lexeme associated with the token
     int lineNum;  // line number where the token is found
 };

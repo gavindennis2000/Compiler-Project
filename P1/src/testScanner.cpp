@@ -1,8 +1,8 @@
 /*
     testScanner.cpp
 
-    iteratively calls scanner() and prints the returned token
-    until EOF
+    Filters input file from main and passes it line by line
+    to scanner, then prints out the returned token.
 */
 
 #include "testScanner.h"  // header file
@@ -48,7 +48,7 @@ void scanIfReady(std::string& stringArg, int lineNumber, bool eofReached = false
         /* before setting the comment flag, if there is a string in the buffer, 
         give it to the scanner before setting the flag and continuing */
 
-        // set the lookahead and make sure it's not a space
+        // set the lookahead to the beginning of the string and make sure it's not a space
         char lookahead = stringArg[0];
         while (lookahead == ' ') {
             stringArg.erase(0, 1);
@@ -87,7 +87,6 @@ void testScanner(std::ifstream& file) {
     std::string stringArg = "";  // string provided to scanner; filtered from input file
     int lineNumber = 1;  // line number provided to scanner, kept track of by this tester
     bool commentFlag = false;  // flag that checks if current character is part of a comment
-    char lookahead;  // lookahead is set before string is sent to scanner
 
     // filter the file before you pass it to scanner
     std::string line;
@@ -131,15 +130,11 @@ void testScanner(std::ifstream& file) {
 
         // check if file has ended
         if (file.eof()) {
+            std::cout << "eof\n";
             scanIfReady(stringArg, lineNumber, true);
         }
 
         // increment line number
         lineNumber++;
     }
-
-    // run the scanner one more time for the empty file token
-    // scanIfReady(stringArg, lineNumber);
-
-    
 }

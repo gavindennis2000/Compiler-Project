@@ -1,3 +1,12 @@
+/*
+    scanner.cpp 
+
+    Uses driver table to determine tokenID, token string,
+    and line number for an inputted string.
+
+    Throws an error and halts for invalid tokens.
+*/
+
 #include "scanner.h"  // header file
 #include "token.h"  // for token structure
 #include <cstdlib>  // for premature termination
@@ -16,7 +25,6 @@ int driverTable[TABLE_COLUMNS][TABLE_ROWS] = {
 /* q5 */ {1001,  1001,   1001,   1001,   1001,   1001}
 
 /* t1 = 1001, t2 = 1002, t3 = 1003, eofTK = 1004 */
-
 };
 
 token FADriver(std::string fileStr, int lineNum, char lookahead) {
@@ -47,7 +55,6 @@ token FADriver(std::string fileStr, int lineNum, char lookahead) {
             // if final state is reached, set its ID
 
             state = nextState; 
-
             switch (state) {
                 case 1001:
                     newToken.tokenID = t1_tk;

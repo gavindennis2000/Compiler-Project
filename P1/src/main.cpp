@@ -8,20 +8,17 @@
     Documentation/resources, test cases, and compilation instructions can be found
     in the README.
 
-    Gets input from the user from either the command-line or cin; validates input;
-    provides input to testScanner, which iteratively gives scanner one token at a time
-    until eof, and prints out each token.
+    Gets input from the user from either the command-line or cin, provides input to 
+    testScanner, which iteratively calls scanner for one token at a time
+    until eof, while printing out each token.
 
 */
 
 #include "testScanner.h"  // for temporary parser
-#include <iostream>  // for standard input and output streams
 #include <string>  // for getline functionality
 #include <fstream>  // for file handling
 #include <stdio.h>  // for remove function from c library (used to remove temp input file)
-
-// function prototypes (there's just one)
-bool isValidInput(std::ifstream&);  // used to validate input file before creating the binary tree
+#include <iostream>
 
 // main program
 // file input borrowed from ../P0/main.cpp
