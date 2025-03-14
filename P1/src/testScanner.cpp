@@ -17,6 +17,7 @@ void printToken(token tok) {
     token type, its string, and its line number */
 
     // get the token type
+    std::cout << "tokenID is: " << tok.tokenID << " t1_tk is: " << t1_tk << "\n";
     std::string tokenTypeStr;
     switch (tok.tokenID) {
         case t1_tk:
