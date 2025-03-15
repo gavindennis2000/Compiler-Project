@@ -1,10 +1,5 @@
 /*
-    scanner.cpp 
-
-    Uses driver table to determine tokenID, token string,
-    and line number for an inputted string.
-
-    Throws an error and halts for invalid tokens.
+    scanner.h 
 */
 
 #include <iostream>

@@ -1,17 +1,6 @@
 x16 +53 !
 
-*comment is here*
 
+%        *comment is here* S228  
 
-
-
-
-* multi line comment is 
-h 
-e 
-r 
-e     * S225 * another one * 
-
-
-
-% S228
++42

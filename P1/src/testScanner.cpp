@@ -85,12 +85,15 @@ void testScanner(std::ifstream& file) {
 
     token tok;  // token to be returned by the scanner
     std::string stringArg = "";  // string provided to scanner; filtered from input file
-    int lineNumber = 1;  // line number provided to scanner, kept track of by this tester
+    int lineNumber = 0;  // line number provided to scanner, kept track of by this tester
     bool commentFlag = false;  // flag that checks if current character is part of a comment
 
     // filter the file before you pass it to scanner
     std::string line;
     while (std::getline(file, line)) {
+
+        // increment line number
+        lineNumber++;
 
         for (int i = 0; i < line.length(); i++) {
             // parse every character in line to remove extra white spaces and comments
@@ -127,14 +130,11 @@ void testScanner(std::ifstream& file) {
 
         // run the scanner after every line if stringArg has contents
         scanIfReady(stringArg, lineNumber);
+    }
 
-        // check if file has ended
-        if (file.eof()) {
-            std::cout << "eof\n";
-            scanIfReady(stringArg, lineNumber, true);
-        }
+    // make sure file has ended and get eof token
 
-        // increment line number
-        lineNumber++;
+    if (file.eof()) {
+        scanIfReady(stringArg, lineNumber, true);
     }
 }

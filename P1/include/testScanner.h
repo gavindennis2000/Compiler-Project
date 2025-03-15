@@ -1,8 +1,5 @@
 /*
-    testScanner.cpp
-
-    Filters input file from main and passes it line by line
-    to scanner, then prints out the returned token.
+    testScanner.h
 */
 
 #include <iostream>

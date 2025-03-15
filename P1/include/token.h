@@ -1,7 +1,10 @@
 /*
     token.h 
 
-    Declares the token struct and its members.
+    Declares the token struct and its members:
+        token ID,
+        string associated with token,
+        token's line number
 */
 
 #ifndef TOKEN_H
