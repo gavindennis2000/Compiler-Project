@@ -1,0 +1,35 @@
+* this
+is the 
+most complex
+test 
+case * * * x123+456!z789
+
+
+
+
+
+x16 +53 !
+
+*comment is here*
+
+
+
+
+
+* multi line comment is 
+h 
+e 
+r 
+e     * S225 * another one * 
+
+
+
+% S228
+
+
+a1
+
+
+s890 * end it right here *
+
+*throw an error here -> * 21
