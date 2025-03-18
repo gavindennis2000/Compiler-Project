@@ -31,8 +31,8 @@
 *.out
 *.app
 
-# Build folder
-./build
-
-# driver table
-driverTable_001
+# Build and tar folders
+./P0/build/
+./P1/build/
+./P2/build/
+./tar

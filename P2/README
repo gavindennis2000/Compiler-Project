@@ -1,0 +1,34 @@
+README
+
+Gavin Dennis
+CS 4280
+Project 2
+
+Resources and documentation:
+        
+AI Usage
+
+How to compile:
+    1. make sure you are in the "Gavin-Dennis-P2/" directory
+    2. in the terminal, run the "make" command to compile the programs
+    3. Optionally, run the following commands to execute the program with the following
+       test cases:
+    * make test - runs P2 with tests/P2_test (a file that doesn't exist) as an argument
+	* make test1 - runs P2 with tests/P2_test1 as argument
+	* make test1e - runs P2 with tests/P2_test1e as argument (this one has an invalid token)
+	* make test2 - runs P2 with tests/P2_test2 as argument
+	* make test3 - runs P2 with tests/P2_test3 as argument
+	* make test4 - runs P2 with tests/P2_test4 as argument
+	* make testGavin - runs P2 with tests/P2_testGavin as argument (the most comprehensive test)
+    4. the finished executuble 'P2' can be found in the 'build' directory (Gavin-Dennis-P2/build/)
+
+Problems encountered:
+
+Test cases:
+    P2_test1.txt - one valid token 
+    P2_test1e.txt - one invalid token; throws an error and halts
+    P2_test2.txt - a list with at least one of each token type, separated by spaces/new lines 
+    P2_test3.txt - similar to test2 but with the whitespaces removed 
+    P2_test4.txt - similar to test2 but with comments and blank lines added 
+	P2_testGavin - my personal test case, longer and more complicated than the previous;
+                   the last token is invalid and will throw an error
