@@ -14,14 +14,14 @@
 
 */
 
-#include "testScanner.h"  // for temporary parser
+#include "parser.h"  // for temporary parser
 #include <string>  // for getline functionality
 #include <fstream>  // for file handling
 #include <stdio.h>  // for remove function from c library (used to remove temp input file)
 #include <iostream>
 
 // main program
-// file input borrowed from ../P0/main.cpp
+// alot of the file input borrowed from ../P0/main.cpp
 int main(int argc, char* argv[]) {
     /* either takes in text file as argument, or reads user input into a file.
     Then passes it to testScanner which provides one token at a time to scanner. */
@@ -30,9 +30,9 @@ int main(int argc, char* argv[]) {
     std::string tempFilename = "tempUserInput.txt";  // filename for temp file that stores user input.
     std::ofstream temp;  // temp file that stores user input. deleted after the tree is built
 
-    // intro message to user
+    // introductory message to user
     std::cout   << "* * * * * * * * * * * * * * * * * * * * \n"
-                << "Project 1 \n"
+                << "Project 2 \n"
                 << "\n" 
                 << "Takes in one file as an argument, otherwise it reads in user input from keyboard.\n\n";
 
@@ -83,8 +83,8 @@ int main(int argc, char* argv[]) {
         return 1;
     }
 
-    // provide the file to test scanner and let it handle the rest
-    testScanner(file);
+    // provide the file to parser and let it handle the rest
+    parser(file);
 
     // the scanner is finished; close the file
     file.close();

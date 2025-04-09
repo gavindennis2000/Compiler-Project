@@ -36,7 +36,7 @@ $(TARGET): $(OBJS)
 build/main.o: src/main.cpp
 	$(CC) $(CFLAGS) -c src/main.cpp -o ./build/main.o
 build/parser.o: src/parser.cpp
-	$(CC) $(CFLAGS) -c src/testScanner.cpp -o build/testScanner.o
+	$(CC) $(CFLAGS) -c src/parser.cpp -o build/parser.o
 build/scanner.o: src/scanner.cpp
 	$(CC) $(CFLAGS) -c src/scanner.cpp -o build/scanner.o
 
