@@ -8,7 +8,7 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-void filter(std::ifstream& file);
+void filter(std::fstream& file);
 void parser(std::string& stringArg, int lineNumber, bool eofReached);
 void printToken(token tok);
 

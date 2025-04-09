@@ -27,7 +27,7 @@ int driverTable[TABLE_COLUMNS][TABLE_ROWS] = {
 /* t1 = 1001, t2 = 1002, t3 = 1003, eofTK = 1004 */
 };
 
-token FADriver(std::string fileStr, int lineNum, char lookahead) {
+token scanner(std::string fileStr, int lineNum, char lookahead) {
     /* takes in string, line number, and lookahead from tester
     as arguments. uses driver table to return the correct token
     for the file string. */

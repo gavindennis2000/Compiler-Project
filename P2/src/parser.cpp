@@ -14,66 +14,6 @@
 
 token tok;  // global token variable to be accessed by all functions
 
-void filter(std::ifstream& file) {
-    /* filters text from file (counts lines, skips spaces and comments), then repeatedly provides it to
-    scanner, printing out each token, until end-of-file token is returned */
-
-    token tok;  // token to be returned by the scanner
-    std::string stringArg = "";  // string provided to scanner; filtered from input file
-    int lineNumber = 0;  // line number provided to scanner, kept track of by this tester
-    bool commentFlag = false;  // flag that checks if current character is part of a comment
-
-    // filter the file before you pass it to scanner
-    std::string line;
-    while (std::getline(file, line)) {
-
-        // increment line number
-        lineNumber++;
-
-        for (int i = 0; i < line.length(); i++) {
-            // parse every character in line to remove extra white spaces and comments
-
-            char ch = line[i];
-            char nextChar = (i < line.length() - 1) ? line[i + 1] : '\n';  // nextchar is either the next char or a new line if the line is over
-
-            // check for comments
-            if (ch == '*') {
-                // if there is contents in stringArg, process the tokens before setting the flag
-                scanIfReady(stringArg, lineNumber);
-
-                // if commentFlag is up, put it down; otherwise put it up
-                commentFlag = (commentFlag) ? false : true;
-                continue;
-            }
-
-            // with new lines, run the scanner if stringArg has contents, increment the line number, then remove the new line
-            if (ch == '\n') {
-                scanIfReady(stringArg, lineNumber);
-                lineNumber++;
-                continue;
-            }
-
-            // if commentFlag is up, keep continuing until the end of the comment
-            if (commentFlag) { continue; }
-
-            // remove all extra spaces
-            if (ch == ' ' && nextChar == ' ') { continue; }
-
-            // append all other characters to stringArg
-            stringArg += ch;
-        }
-
-        // run the scanner after every line if stringArg has contents
-        scanIfReady(stringArg, lineNumber);
-    }
-
-    // make sure file has ended and get eof token
-
-    if (file.eof()) {
-        parser(stringArg, lineNumber, true);
-    }
-}
-
 void parser(std::string& stringArg, int lineNumber, bool eofReached = false) {
     /* this is ran when end of line is reached or the comment flag is set.
     checks if stringArg has contents, and if it does, feeds it to the scanner
@@ -113,7 +53,6 @@ void parser(std::string& stringArg, int lineNumber, bool eofReached = false) {
 
     return;
 }
-
 
 void printToken(token tok) {
     /* prints out token information returned by scanner:

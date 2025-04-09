@@ -5,6 +5,10 @@ CS 4280
 Project 2
 
 Resources and documentation:
+    My previous projects:
+        P0, P1
+    Stack Overflow Discussion on modifying files with fstream:
+        https://stackoverflow.com/questions/15667530/fstream-wont-create-a-file
         
 AI Usage
 
@@ -12,7 +16,7 @@ How to compile:
     1. make sure you are in the "Gavin-Dennis-P2/" directory
     2. in the terminal, run the "make" command to compile the programs
     3. Optionally, run the following commands to execute the program with the following
-       test cases:
+       test cases: (documentation about test cases at the bottom of this page)
     * make test - runs P2 with tests/P2_test (a file that doesn't exist) as an argument
 	* make test1 - runs P2 with tests/P2_test1 as argument
 	* make test1e - runs P2 with tests/P2_test1e as argument (this one has an invalid token)
