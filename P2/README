@@ -10,7 +10,12 @@ Resources and documentation:
     Stack Overflow Discussion on modifying files with fstream:
         https://stackoverflow.com/questions/15667530/fstream-wont-create-a-file
         
-AI Usage
+AI Usage:
+    I asked ChatGPT the following questions:
+        How do I check for EOF with std::ifstream::get()?
+            Answer: ifstream::get will return an EOF char if there aren't any characters left in the file.
+        
+
 
 How to compile:
     1. make sure you are in the "Gavin-Dennis-P2/" directory

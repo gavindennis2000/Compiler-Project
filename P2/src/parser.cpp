@@ -13,44 +13,20 @@
 #include <iostream> 
 
 token tok;  // global token variable to be accessed by all functions
+int lineNum = 0;
 
-void parser(std::string& stringArg, int lineNumber, bool eofReached = false) {
-    /* this is ran when end of line is reached or the comment flag is set.
-    checks if stringArg has contents, and if it does, feeds it to the scanner
-    iteratively until it is empty. */
+void parser(std::ifstream& filteredFile) {
+    /* */
 
-    while (stringArg != "" || eofReached) {
-        /* before setting the comment flag, if there is a string in the buffer, 
-        give it to the scanner before setting the flag and continuing */
+    tok = scanner(filteredFile, lineNum);
+    S(filteredFile);
 
-        // set the lookahead to the beginning of the string and make sure it's not a space
-        char lookahead = stringArg[0];
-        while (lookahead == ' ') {
-            stringArg.erase(0, 1);
-            lookahead = stringArg[0];
-            
-        }
-
-        // make sure empty lookaheads due to comments don't trigger an
-        // eof token
-        if (lookahead == '\0' && !eofReached) {
-            break;
-        }
-        // run the scanner
-        token tok = FADriver(stringArg, lineNumber, lookahead);
-        
-        // print the returned token
-        printToken(tok);
-
-        // if eof reached, break out of while loop
-        if (tok.tokenID == EOF_tk) {
-            break;
-        }
-
-        // remove token string from stringArg, then loop the scanner til stringArg is empty
-        stringArg.erase(0, tok.tokenStr.length());
+    if (tok.tokenID == EOF_tk) {
+        std::cout <<"you win";
     }
-
+    else {
+        std::cout << "error\n";
+    }
     return;
 }
 
@@ -82,34 +58,42 @@ void printToken(token tok) {
 }
 
 // functions for BNF
-void S() {
+void S(std::ifstream& filteredFile) {
+    // FIRST(S) == { " ( empty }
+    printToken(tok);
+
+    // predicts S -> A ( B B )
+    if (tok.tokenStr == "\"" || tok.tokenStr == "(") {
+        tok = scanner(filteredFile, lineNum);
+        A(filteredFile);
+        return;
+    }
+}
+
+void A(std::ifstream& filteredFile) {
 
 }
 
-void A() {
+void B(std::ifstream& filteredFile) {
 
 }
 
-void B() {
+void C(std::ifstream& filteredFile) {
 
 }
 
-void C() {
+void D(std::ifstream& filteredFile) {
 
 }
 
-void D() {
+void E(std::ifstream& filteredFile) {
 
 }
 
-void E() {
+void F(std::ifstream& filteredFile) {
 
 }
 
-void F() {
-
-}
-
-void G() {
+void G(std::ifstream& filteredFile) {
 
 }

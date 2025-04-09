@@ -3,23 +3,23 @@
 */
 
 #include <iostream>
+#include <fstream>
 #include "token.h"
 
 #ifndef PARSER_H
 #define PARSER_H
 
-void filter(std::fstream& file);
-void parser(std::string& stringArg, int lineNumber, bool eofReached);
+void parser(std::ifstream& filteredFile);
 void printToken(token tok);
 
 // functions for BNF
-void S();
-void A();
-void B();
-void C();
-void D();
-void E();
-void F();
-void G();
+void S(std::ifstream& filteredFile);
+void A(std::ifstream& filteredFile);
+void B(std::ifstream& filteredFile);
+void C(std::ifstream& filteredFile);
+void D(std::ifstream& filteredFile);
+void E(std::ifstream& filteredFile);
+void F(std::ifstream& filteredFile);
+void G(std::ifstream& filteredFile);
 
 #endif

@@ -10,8 +10,8 @@
 #include <iostream>
 #include "token.h"
 
-token FADriver(std::string, int, char);
-void invalidTokenError(std::string fileStr, int lineNum);
+token scanner(std::ifstream& filteredFile, int& lineNum);
+void invalidTokenError(std::string tokenStr, int lineNum);
 int getLookaheadValue(char lookahead);
 
 #endif

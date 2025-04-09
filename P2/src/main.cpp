@@ -21,7 +21,7 @@
 #include <vector>  // used for file filter function
 #include <iostream>
 
-void filter(std::ifstream& file, std::fstream& filteredFile) {
+void filter(std::ifstream& file, std::ofstream& filteredFile) {
     // filters file contents for comments before passing to parser
 
     // make sure files are open and ready
@@ -36,7 +36,6 @@ void filter(std::ifstream& file, std::fstream& filteredFile) {
     while (std::getline(file, line)) {
         fileLines.push_back(line);
     }
-    file.close();
 
     // filter each line in vector
     bool commentFlag = false;
@@ -57,10 +56,6 @@ void filter(std::ifstream& file, std::fstream& filteredFile) {
         filteredFile << fileLines[i];
     }
 
-    // clear eof flags and set the file pointer to the beginning of the file
-    filteredFile.clear();
-    filteredFile.seekg(0);
-
     // finished filtering
     return;
 }
@@ -77,9 +72,9 @@ int main(int argc, char* argv[]) {
     std::cout   << "* * * * * * * * * * * * * * * * * * * * \n"
                 << "P2 \n"
                 << "\n" 
-                << "Takes in one file as an argument, otherwise it reads in user input from keyboard.\n"
-                << "Filters file contents, then passes to parser which determines if tokens returned by scanner\n"
-                << "Match BNF Grammer. If tokens match, parser prints out a parse tree.\n";
+                << "Takes in one file as an argument, otherwise it reads in user input from keyboard. \n"
+                << "Filters file contents, then passes to parser which determines if tokens returned by \n"
+                << "scanner match BNF Grammer. If tokens match, parser prints out a parse tree.\n\n";
 
     // check for command line arguments
     int numberOfFiles = argc - 1;
@@ -130,14 +125,19 @@ int main(int argc, char* argv[]) {
 
     // filter file before giving it to scanner
     std::string filterFilename = filename + ".filter";
-    std::fstream filteredFile(filterFilename, std::fstream::out);
-    filter(file, filteredFile);
+    std::ofstream filteredFileWrite(filterFilename, std::fstream::out);
+    filter(file, filteredFileWrite);
+
+    // close the open files, then open a read-only version to pass to scanner
+    file.close();
+    filteredFileWrite.close();
+    std::ifstream filteredFileRead(filterFilename);
 
     // provide the file to parser and let it handle the rest
-    parser(filteredFile);
+    parser(filteredFileRead);
 
-    // the scanner is finished; close the filtered file
-    filteredFile.close();
+    // the scanner is finished; close the read-only filtered file
+    filteredFileRead.close();
 
     // remove the temp user input file if it exists as well as the filtered file
     std::remove(tempFilename.c_str());

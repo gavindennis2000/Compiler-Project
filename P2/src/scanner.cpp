@@ -10,6 +10,7 @@
 #include "scanner.h"  // header file
 #include "token.h"  // for token structure
 #include <cstdlib>  // for premature termination
+#include <fstream>  // for file handling functions
 #include <iostream> 
 
 // driver table
@@ -27,7 +28,7 @@ int driverTable[TABLE_COLUMNS][TABLE_ROWS] = {
 /* t1 = 1001, t2 = 1002, t3 = 1003, eofTK = 1004 */
 };
 
-token scanner(std::string fileStr, int lineNum, char lookahead) {
+token scanner(std::ifstream& filteredFile, int& lineNum) {
     /* takes in string, line number, and lookahead from tester
     as arguments. uses driver table to return the correct token
     for the file string. */
@@ -38,18 +39,47 @@ token scanner(std::string fileStr, int lineNum, char lookahead) {
     newToken.lineNum = lineNum;
     int state = 0, nextState;
 
-    // set the lookahead index
-    int lookaheadIndex = 0;
-    lookahead = fileStr[lookaheadIndex];
+    // set the initial lookahead
+    char lookahead = filteredFile.peek();
 
-    do {
+    // remove all white spaces at the beginning
+    if (lookahead == '\n') {
+        std::cout << "wow\n";
+    }
+    while (lookahead == ' ' || lookahead == '\n') {
+        // TODO
+        if (lookahead == '\n') {
+            lineNum++;
+            std::cout << "line num++\n";
+            // discard the current whitespace, then set the next lookahead
+            filteredFile.ignore(1);  
+            lookahead = filteredFile.peek();
+            continue;
+        }
+        else if (lookahead == ' ') {
+            // discard the current whitespace, then set the next lookahead
+            filteredFile.ignore(1);
+            lookahead = filteredFile.peek();
+            continue;
+        }
+    }
+
+    // keep parsing characters until a token is formed
+    while (state >= 0 && state <= 1000) {
+
+        // // if EOF is reached, return an EOF token
+        // if (filteredFile.eof()) {
+        //     state = 1004;
+        // }
+
         // keep finding the next state using the driver table
         int lookaheadValue = getLookaheadValue(lookahead);
         nextState = driverTable[state][lookaheadValue];
 
         if (nextState < 0) {
-            // if next state is an error, return invalid
-            invalidTokenError(fileStr, lineNum);
+            // if next state is an error, return the invalid token with a message
+            newToken.tokenStr += lookahead;
+            invalidTokenError(newToken.tokenStr, lineNum);
         }
         else if (nextState > 1000) {
             // if final state is reached, set its ID
@@ -66,19 +96,18 @@ token scanner(std::string fileStr, int lineNum, char lookahead) {
                     newToken.tokenID = t3_tk;
                     break;
                 case 1004:
-                default:
                     newToken.tokenID = EOF_tk;
                     break;
             }
         }
         else {
             // if state isn't final, append the character to the token string
-            // then increment the lookahead
+            // then update the lookahead
             state = nextState;
-            newToken.tokenStr += lookahead;
-            lookahead = fileStr[++lookaheadIndex];
+            newToken.tokenStr += filteredFile.get();
+            lookahead = filteredFile.peek();
         }
-    } while (state >= 0 && state <= 1000);
+    }
 
     return newToken;
 }
@@ -115,9 +144,9 @@ int getLookaheadValue(char lookahead) {
     return 4;
 }
 
-void invalidTokenError(std::string fileStr, int lineNum) {
+void invalidTokenError(std::string tokenStr, int lineNum) {
     /* displays a message when handling an invalid token then halts */
 
-    std::cout << "SCANNER ERROR:" << "\t" << fileStr << "\t" << lineNum << "\n" << "Terminating program.\n";
+    std::cout << "SCANNER ERROR:" << "\t" << tokenStr << "\t" << lineNum << "\n" << "Terminating program.\n";
     exit(EXIT_FAILURE);
 }
