@@ -6,7 +6,7 @@
 */
 
 #include "parser.h"  // header file
-#include "scanner.h"  // for getToken
+#include "scanner.h"  // for scanning tokens
 #include "token.h"  // for token struct
 #include <string>  // for getline
 #include <fstream>  // for file handling
@@ -19,6 +19,7 @@ void parser(std::ifstream& filteredFile) {
     /* */
 
     tok = scanner(filteredFile, lineNum);
+    printToken(tok);
     S(filteredFile);
 
     if (tok.tokenID == EOF_tk) {
@@ -57,43 +58,192 @@ void printToken(token tok) {
     return;
 }
 
+void parserError() {
+    /* prints an error message with token and line number when parsed token
+    doesn't match BNF grammar */
+
+    std::cout << "PARSING ERROR: " << tok.tokenStr << " " << lineNum << ".\n Terminating.\n";
+    exit(EXIT_FAILURE);
+}
+
 // functions for BNF
 void S(std::ifstream& filteredFile) {
-    // FIRST(S) == { " ( empty }
-    printToken(tok);
+    // S -> A ( B B )
 
-    // predicts S -> A ( B B )
-    if (tok.tokenStr == "\"" || tok.tokenStr == "(") {
+    // A
+    A(filteredFile);
+
+    // (
+    if (tok.tokenStr == "(") {
         tok = scanner(filteredFile, lineNum);
-        A(filteredFile);
+        printToken(tok);
+    }
+    else {
+        parserError();
+    }
+
+    // Two B's
+    B(filteredFile);
+    B(filteredFile);
+
+    // )
+    if (tok.tokenStr == ")") {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+    }
+    else {
+        parserError();
+    }
+
+    // parser is finished
+    return;
+}
+
+void A(std::ifstream& filteredFile) {
+    // A -> " t2 | empty
+
+    if (tok.tokenStr == "\"") {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        if (tok.tokenID == t2_tk) {
+            tok = scanner(filteredFile, lineNum);
+            printToken(tok);
+            return;
+        }
+        else {
+            parserError();
+        }
+    }
+    else {
         return;
     }
 }
 
-void A(std::ifstream& filteredFile) {
-
-}
-
 void B(std::ifstream& filteredFile) {
+    // B -> S | C | D | E | G
 
+    if (tok.tokenStr == "#" || tok.tokenStr == "!") {
+        C(filteredFile);
+        return;
+    }
+
+    else if (tok.tokenStr == "$") {
+        D(filteredFile);
+        return;
+    }
+
+    else if (tok.tokenStr == "'") {
+        E(filteredFile);
+        return;
+    }
+
+    else if (tok.tokenID == t2_tk) {
+        G(filteredFile);
+        return;
+    }
+    else {
+        // since FIRST(S) contains empty, we use it for all other option
+        S(filteredFile);
+        return;
+    }
 }
 
 void C(std::ifstream& filteredFile) {
+    // C -> # t2 | ! F
 
+    if (tok.tokenStr == "#") {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        if (tok.tokenID == t2_tk) {
+            tok = scanner(filteredFile, lineNum);
+            printToken(tok);
+            return;
+        }
+        else {
+            parserError();
+        }
+    }
+    else if (tok.tokenStr == "!") {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        F(filteredFile);
+        return;
+    }
+    else {
+        parserError();
+    }
 }
 
 void D(std::ifstream& filteredFile) {
-
+    // D -> $ F
+    if (tok.tokenStr == "$") {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        F(filteredFile);
+        return;
+    }
+    else {
+        parserError();
+    }
 }
 
 void E(std::ifstream& filteredFile) {
+    // E -> ' F F F B
 
+    if (tok.tokenStr == "\'") {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        F(filteredFile);
+        F(filteredFile);
+        F(filteredFile);
+        B(filteredFile);
+        return;
+    }
+    else {
+        parserError();
+    }
 }
 
 void F(std::ifstream& filteredFile) {
+    // F -> t2 | t3 | & F F
 
+    if (tok.tokenID == t2_tk) {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        return;
+    }
+    else if (tok.tokenID == t3_tk) {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        return;
+    }
+    else if (tok.tokenStr == "&") {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        F(filteredFile);
+        F(filteredFile);
+        return;
+    }
+    else {
+        parserError();
+    }
 }
 
 void G(std::ifstream& filteredFile) {
-
+    // G -> t2 % F
+    if (tok.tokenID == t2_tk) {
+        tok = scanner(filteredFile, lineNum);
+        printToken(tok);
+        if (tok.tokenStr == "%") {
+            tok = scanner(filteredFile, lineNum);
+            printToken(tok);
+            F(filteredFile);
+        }
+        else {
+            parserError();
+        }
+    }
+    else {
+        parserError();
+    }
 }
