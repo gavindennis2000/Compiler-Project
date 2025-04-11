@@ -9,7 +9,7 @@
 
 #include "scanner.h"  // header file
 #include "token.h"  // for token structure
-#include <cstdlib>  // for premature termination
+#include <cstdlib>  // for premature termination with exit
 #include <fstream>  // for file handling functions
 #include <iostream> 
 
@@ -43,21 +43,18 @@ token scanner(std::ifstream& filteredFile, int& lineNum) {
     char lookahead = filteredFile.peek();
 
     // remove all white spaces at the beginning
-    if (lookahead == '\n') {
-        std::cout << "wow\n";
-    }
     while (lookahead == ' ' || lookahead == '\n') {
         // TODO
         if (lookahead == '\n') {
             lineNum++;
             std::cout << "line num++\n";
-            // discard the current whitespace, then set the next lookahead
+            // discard the current whitespace, then update the lookahead
             filteredFile.ignore(1);  
             lookahead = filteredFile.peek();
             continue;
         }
         else if (lookahead == ' ') {
-            // discard the current whitespace, then set the next lookahead
+            // discard the current whitespace, then update the lookahead
             filteredFile.ignore(1);
             lookahead = filteredFile.peek();
             continue;

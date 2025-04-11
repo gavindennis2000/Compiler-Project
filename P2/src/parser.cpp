@@ -8,27 +8,49 @@
 #include "parser.h"  // header file
 #include "scanner.h"  // for scanning tokens
 #include "token.h"  // for token struct
+#include "node.h"  // for parse tree node struct
+#include "testTree.h"  // for node and parse tree functions
 #include <string>  // for getline
 #include <fstream>  // for file handling
 #include <iostream> 
 
 token tok;  // global token variable to be accessed by all functions
+std::ifstream * filePtr;  // global variable that points to filtered file from main
 int lineNum = 0;
 
-void parser(std::ifstream& filteredFile) {
+node_t* parser(std::ifstream& filteredFile) {
     /* */
 
-    tok = scanner(filteredFile, lineNum);
+    // set the global file variable to the filteredFile passed by main
+    filePtr = &filteredFile;
+
+    tok = scanner(*filePtr, lineNum);
     printToken(tok);
-    S(filteredFile);
+    node_t* root = S();
 
     if (tok.tokenID == EOF_tk) {
-        std::cout <<"you win";
+        return root;
     }
-    else {
-        std::cout << "error\n";
+
+    // throw error if unsuccessful parse
+    std::cout << "ERROR: EOF token not returned. Terminating.\n";
+    exit(EXIT_FAILURE);
+}
+
+std::string getLabelFromEnum(tokenType tokenID) {
+    // takes in token type enum as argument and returns the converted string
+
+    switch(tokenID) {
+        case t1_tk:
+            return "t1";
+        case t2_tk:
+            return "t2";
+        case t3_tk:
+            return "t3";
+        case EOF_tk:
+        default:
+            return "EOF";
     }
-    return;
 }
 
 void printToken(token tok) {
@@ -62,20 +84,23 @@ void parserError() {
     /* prints an error message with token and line number when parsed token
     doesn't match BNF grammar */
 
-    std::cout << "PARSING ERROR: " << tok.tokenStr << " " << lineNum << ".\n Terminating.\n";
+    std::cout << "PARSER ERROR: " << tok.tokenStr << " " << lineNum << ".\n Terminating.\n";
     exit(EXIT_FAILURE);
 }
 
 // functions for BNF
-void S(std::ifstream& filteredFile) {
+node_t* S() {
     // S -> A ( B B )
 
+    node_t* root = getNode("S");
+
     // A
-    A(filteredFile);
+    root->children.push_back( A() );
 
     // (
     if (tok.tokenStr == "(") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
     }
     else {
@@ -83,12 +108,13 @@ void S(std::ifstream& filteredFile) {
     }
 
     // Two B's
-    B(filteredFile);
-    B(filteredFile);
+    root->children.push_back( B() );
+    root->children.push_back( B() );
 
     // )
     if (tok.tokenStr == ")") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
     }
     else {
@@ -96,148 +122,176 @@ void S(std::ifstream& filteredFile) {
     }
 
     // parser is finished
-    return;
+    return root;
 }
 
-void A(std::ifstream& filteredFile) {
+node_t* A() {
     // A -> " t2 | empty
 
+    node_t* root = getNode("A");
+
     if (tok.tokenStr == "\"") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
         if (tok.tokenID == t2_tk) {
-            tok = scanner(filteredFile, lineNum);
+            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+            tok = scanner(*filePtr, lineNum);
             printToken(tok);
-            return;
         }
         else {
             parserError();
         }
     }
     else {
-        return;
+        root->children.push_back( getNode("empty") );
     }
+
+    return root;
 }
 
-void B(std::ifstream& filteredFile) {
+node_t* B() {
     // B -> S | C | D | E | G
+    // TODO switch
+
+    node_t* root = getNode("B");
 
     if (tok.tokenStr == "#" || tok.tokenStr == "!") {
-        C(filteredFile);
-        return;
+        root->children.push_back( C() );
     }
 
     else if (tok.tokenStr == "$") {
-        D(filteredFile);
-        return;
+        root->children.push_back( D() );
     }
 
     else if (tok.tokenStr == "'") {
-        E(filteredFile);
-        return;
+        root->children.push_back( E() );
     }
 
     else if (tok.tokenID == t2_tk) {
-        G(filteredFile);
-        return;
+        root->children.push_back( G() );
     }
     else {
         // since FIRST(S) contains empty, we use it for all other option
-        S(filteredFile);
-        return;
+        root->children.push_back( S() );
     }
+
+    return root;
 }
 
-void C(std::ifstream& filteredFile) {
+node_t* C() {
     // C -> # t2 | ! F
 
+    node_t* root = getNode("C");
+
     if (tok.tokenStr == "#") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
         if (tok.tokenID == t2_tk) {
-            tok = scanner(filteredFile, lineNum);
+            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+            tok = scanner(*filePtr, lineNum);
             printToken(tok);
-            return;
         }
         else {
             parserError();
         }
     }
     else if (tok.tokenStr == "!") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        F(filteredFile);
-        return;
+        root->children.push_back( F() );
     }
     else {
         parserError();
     }
+
+    return root;
 }
 
-void D(std::ifstream& filteredFile) {
+node_t* D() {
     // D -> $ F
+
+    node_t* root = getNode("D");
+
     if (tok.tokenStr == "$") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        F(filteredFile);
-        return;
+        root->children.push_back( F() );
     }
     else {
         parserError();
     }
+
+    return root;
 }
 
-void E(std::ifstream& filteredFile) {
+node_t* E() {
     // E -> ' F F F B
 
+    node_t* root = getNode("E");
+
     if (tok.tokenStr == "\'") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        F(filteredFile);
-        F(filteredFile);
-        F(filteredFile);
-        B(filteredFile);
-        return;
+        root->children.push_back( F() );
+        root->children.push_back( F() );
+        root->children.push_back( F() );
+        root->children.push_back( B() );
     }
     else {
         parserError();
     }
+
+    return root;
 }
 
-void F(std::ifstream& filteredFile) {
+node_t* F() {
     // F -> t2 | t3 | & F F
 
+    node_t* root = getNode("F");
+
     if (tok.tokenID == t2_tk) {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        return;
     }
     else if (tok.tokenID == t3_tk) {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        return;
     }
     else if (tok.tokenStr == "&") {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        F(filteredFile);
-        F(filteredFile);
-        return;
+        root->children.push_back( F() );
+        root->children.push_back( F() );
     }
     else {
         parserError();
     }
+
+    return root;
 }
 
-void G(std::ifstream& filteredFile) {
+node_t* G() {
     // G -> t2 % F
+
+    node_t* root = getNode("G");
+
     if (tok.tokenID == t2_tk) {
-        tok = scanner(filteredFile, lineNum);
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        tok = scanner(*filePtr, lineNum);
         printToken(tok);
         if (tok.tokenStr == "%") {
-            tok = scanner(filteredFile, lineNum);
+            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+            tok = scanner(*filePtr, lineNum);
             printToken(tok);
-            F(filteredFile);
+            root->children.push_back( F() );
         }
         else {
             parserError();
@@ -246,4 +300,6 @@ void G(std::ifstream& filteredFile) {
     else {
         parserError();
     }
+
+    return root;
 }

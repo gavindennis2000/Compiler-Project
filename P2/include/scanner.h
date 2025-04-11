@@ -2,8 +2,6 @@
     scanner.h 
 */
 
-#include <iostream>
-
 #ifndef SCANNER_H 
 #define SCANNER_H
 

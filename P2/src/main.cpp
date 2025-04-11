@@ -14,10 +14,13 @@
 
 */
 
-#include "parser.h"  // for temporary parser
+#include "parser.h"  // for token parser
+#include "node.h"  // for parse tree nodes
+#include "testTree.h"  // for parse tree printing and deleting
 #include <string>  // for getline functionality
 #include <fstream>  // for file handling
 #include <stdio.h>  // for remove function from c library (used to remove temp input file)
+#include <cstdlib>  // for premature termination with exit
 #include <vector>  // used for file filter function
 #include <iostream>
 
@@ -134,7 +137,12 @@ int main(int argc, char* argv[]) {
     std::ifstream filteredFileRead(filterFilename);
 
     // provide the file to parser and let it handle the rest
-    parser(filteredFileRead);
+    // parser returns parse tree if successful
+    node_t* parseTreeRoot = parser(filteredFileRead);
+
+    // print the parse tree, then delete it
+    printTree(parseTreeRoot);
+    destroyTree(parseTreeRoot);
 
     // the scanner is finished; close the read-only filtered file
     filteredFileRead.close();

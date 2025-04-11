@@ -23,7 +23,7 @@ CFLAGS = -g -Wall -std=c++11 -Iinclude
 TARGET = build/P2
 
 # object files to create
-OBJS = build/main.o build/parser.o build/scanner.o
+OBJS = build/main.o build/parser.o build/scanner.o build/testTree.o
 
 # default rule: build the final executable
 all: $(TARGET)
@@ -39,6 +39,8 @@ build/parser.o: src/parser.cpp
 	$(CC) $(CFLAGS) -c src/parser.cpp -o build/parser.o
 build/scanner.o: src/scanner.cpp
 	$(CC) $(CFLAGS) -c src/scanner.cpp -o build/scanner.o
+build/testTree.o: src/testTree.cpp
+	$(CC) $(CFLAGS) -c src/testTree.cpp -o build/testTree.o
 
 # clean command: clears the build folder
 clean: 
