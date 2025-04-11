@@ -14,13 +14,13 @@ node_t* parser(std::ifstream& filteredFile);
 void printToken(token tok);
 
 // functions for BNF
-node_t* S();
-node_t* A();
-node_t* B();
-node_t* C();
-node_t* D();
-node_t* E();
-node_t* F();
-node_t* G();
+node_t* S(int);
+node_t* A(int);
+node_t* B(int);
+node_t* C(int);
+node_t* D(int);
+node_t* E(int);
+node_t* F(int);
+node_t* G(int);
 
 #endif

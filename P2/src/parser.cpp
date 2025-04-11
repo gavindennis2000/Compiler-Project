@@ -26,7 +26,7 @@ node_t* parser(std::ifstream& filteredFile) {
 
     tok = scanner(*filePtr, lineNum);
     printToken(tok);
-    node_t* root = S();
+    node_t* root = S(0);
 
     if (tok.tokenID == EOF_tk) {
         return root;
@@ -58,6 +58,7 @@ void printToken(token tok) {
     token type, its string, and its line number */
 
     // get the token type
+    return;
     std::string tokenTypeStr;
     switch (tok.tokenID) {
         case t1_tk:
@@ -89,17 +90,17 @@ void parserError() {
 }
 
 // functions for BNF
-node_t* S() {
+node_t* S(int level) {
     // S -> A ( B B )
 
-    node_t* root = getNode("S");
+    node_t* root = getNode("S", level);
 
     // A
-    root->children.push_back( A() );
+    root->children.push_back( A(level + 1) );
 
     // (
     if (tok.tokenStr == "(") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
     }
@@ -108,12 +109,12 @@ node_t* S() {
     }
 
     // Two B's
-    root->children.push_back( B() );
-    root->children.push_back( B() );
+    root->children.push_back( B(level + 1) );
+    root->children.push_back( B(level + 1) );
 
     // )
     if (tok.tokenStr == ")") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
     }
@@ -125,17 +126,17 @@ node_t* S() {
     return root;
 }
 
-node_t* A() {
+node_t* A(int level) {
     // A -> " t2 | empty
 
-    node_t* root = getNode("A");
+    node_t* root = getNode("A", level);
 
     if (tok.tokenStr == "\"") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
         if (tok.tokenID == t2_tk) {
-            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
             tok = scanner(*filePtr, lineNum);
             printToken(tok);
         }
@@ -144,52 +145,52 @@ node_t* A() {
         }
     }
     else {
-        root->children.push_back( getNode("empty") );
+        root->children.push_back( getNode("empty", level + 1) );
     }
 
     return root;
 }
 
-node_t* B() {
+node_t* B(int level) {
     // B -> S | C | D | E | G
     // TODO switch
 
-    node_t* root = getNode("B");
+    node_t* root = getNode("B", level);
 
     if (tok.tokenStr == "#" || tok.tokenStr == "!") {
-        root->children.push_back( C() );
+        root->children.push_back( C(level + 1) );
     }
 
     else if (tok.tokenStr == "$") {
-        root->children.push_back( D() );
+        root->children.push_back( D(level + 1) );
     }
 
     else if (tok.tokenStr == "'") {
-        root->children.push_back( E() );
+        root->children.push_back( E(level + 1) );
     }
 
     else if (tok.tokenID == t2_tk) {
-        root->children.push_back( G() );
+        root->children.push_back( G(level + 1) );
     }
     else {
         // since FIRST(S) contains empty, we use it for all other option
-        root->children.push_back( S() );
+        root->children.push_back( S(level + 1) );
     }
 
     return root;
 }
 
-node_t* C() {
+node_t* C(int level) {
     // C -> # t2 | ! F
 
-    node_t* root = getNode("C");
+    node_t* root = getNode("C", level);
 
     if (tok.tokenStr == "#") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
         if (tok.tokenID == t2_tk) {
-            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
             tok = scanner(*filePtr, lineNum);
             printToken(tok);
         }
@@ -198,10 +199,10 @@ node_t* C() {
         }
     }
     else if (tok.tokenStr == "!") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        root->children.push_back( F() );
+        root->children.push_back( F(level + 1) );
     }
     else {
         parserError();
@@ -210,16 +211,16 @@ node_t* C() {
     return root;
 }
 
-node_t* D() {
+node_t* D(int level) {
     // D -> $ F
 
-    node_t* root = getNode("D");
+    node_t* root = getNode("D", level);
 
     if (tok.tokenStr == "$") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        root->children.push_back( F() );
+        root->children.push_back( F(level + 1) );
     }
     else {
         parserError();
@@ -228,19 +229,19 @@ node_t* D() {
     return root;
 }
 
-node_t* E() {
+node_t* E(int level) {
     // E -> ' F F F B
 
-    node_t* root = getNode("E");
+    node_t* root = getNode("E", level);
 
     if (tok.tokenStr == "\'") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        root->children.push_back( F() );
-        root->children.push_back( F() );
-        root->children.push_back( F() );
-        root->children.push_back( B() );
+        root->children.push_back( F(level + 1) );
+        root->children.push_back( F(level + 1) );
+        root->children.push_back( F(level + 1) );
+        root->children.push_back( B(level + 1) );
     }
     else {
         parserError();
@@ -249,27 +250,27 @@ node_t* E() {
     return root;
 }
 
-node_t* F() {
+node_t* F(int level) {
     // F -> t2 | t3 | & F F
 
-    node_t* root = getNode("F");
+    node_t* root = getNode("F", level);
 
     if (tok.tokenID == t2_tk) {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
     }
     else if (tok.tokenID == t3_tk) {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
     }
     else if (tok.tokenStr == "&") {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
-        root->children.push_back( F() );
-        root->children.push_back( F() );
+        root->children.push_back( F(level + 1) );
+        root->children.push_back( F(level + 1) );
     }
     else {
         parserError();
@@ -278,20 +279,20 @@ node_t* F() {
     return root;
 }
 
-node_t* G() {
+node_t* G(int level) {
     // G -> t2 % F
 
-    node_t* root = getNode("G");
+    node_t* root = getNode("G", level);
 
     if (tok.tokenID == t2_tk) {
-        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+        root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
         tok = scanner(*filePtr, lineNum);
         printToken(tok);
         if (tok.tokenStr == "%") {
-            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), tok.tokenStr ) );
+            root->children.push_back( getNode( getLabelFromEnum(tok.tokenID), level + 1, tok.tokenStr ) );
             tok = scanner(*filePtr, lineNum);
             printToken(tok);
-            root->children.push_back( F() );
+            root->children.push_back( F(level + 1) );
         }
         else {
             parserError();

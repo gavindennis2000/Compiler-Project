@@ -7,11 +7,12 @@
 #include <node.h>
 #include <vector>
 
-node_t * getNode(std::string label, std::string decoration) {
+node_t * getNode(std::string label, int level, std::string decoration) {
     // allocates node and labels it
 
     node_t * node = new node_t;
     node->label = label;
+    node->level = level;
     node->decoration = decoration;
     
     return node;
