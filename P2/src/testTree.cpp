@@ -1,5 +1,8 @@
 /*
     testTree.cpp
+
+    Contains functions for creating parse tree nodes, printing the parse tree,
+    and deleting the tree afterwords.
 */
 
 #include <iostream> 
@@ -8,9 +11,9 @@
 #include <vector>
 
 node_t * getNode(std::string label, int level, std::string decoration) {
-    // allocates node and labels it
+    // allocates memory for leaf node and labels it
 
-    node_t * node = new node_t;
+    node_t * node = new node_t;  // allocate memory for new leaf
     node->label = label;
     node->level = level;
     node->decoration = decoration;

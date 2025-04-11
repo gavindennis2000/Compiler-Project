@@ -1,16 +1,18 @@
 /*
     main.cpp
 
-    P1
+    P2
     CS 4280-001
     Gavin Dennis 
 
     Documentation/resources, test cases, and compilation instructions can be found
     in the README.
 
-    Gets input from the user from either the command-line or cin, provides input to 
-    testScanner, which iteratively calls scanner for one token at a time
-    until eof, while printing out each token.
+    Gets input from the user from either the command-line or cin. Filters input, then
+    passes to parser. Parser repeatedly calls scanner while ensuring that BNF grammar
+    is followed. parsed tokens are converted into nodes in a parse tree structure.
+    After a successful parse, the tree root is returned to main and a parse tree will
+    be printed to the screen.
 
 */
 
@@ -142,9 +144,10 @@ int main(int argc, char* argv[]) {
 
     // provide the file to parser and let it handle the rest
     // parser returns parse tree if successful
-    node_t* parseTreeRoot = parser(filteredFileRead);
+    node_t* parseTreeRoot = parser(filteredFileRead, filterFilename);
 
     // print the parse tree, then delete it
+    std::cout << "Printing parse tree: \n";
     printTree(parseTreeRoot);
     destroyTree(parseTreeRoot);
 

@@ -10,8 +10,7 @@
 #include "token.h"
 #include "node.h"
 
-node_t* parser(std::ifstream& filteredFile);
-void printToken(token tok);
+node_t* parser(std::ifstream& filteredFile, std::string filterFilename);
 
 // functions for BNF
 node_t* S(int);

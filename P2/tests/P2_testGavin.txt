@@ -1,40 +1,14 @@
-* tony's test case *
-"    +34    ( " 
 
 
+                ( 
+                                ( *first comment
+still in a comment* # +39 ! +39 ) (
+        $ a123 # * another comment * +123
+) *
+one
+last
+comment 
+*
 
 
-
-
-
-
-
-
-
-
-
-        +250 ( ( ! & +10 
-s25 $                         H250 )        +10 
-    % +9 ) ( # +18 ' +7 g0 
-    
-    h11 $ 
-    
-    
-    +8 )                  
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    )
+)

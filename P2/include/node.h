@@ -1,9 +1,9 @@
 /*
     node.h 
 
-    defines the node structure which represents the leaves of a binary tree
-    structure. Members represent the parent and children of the nodes, as well
-    as their character length and level in the tree.
+    defines the node structure which represents the parse tree leaves.
+    Members represent the label, level, and decoration (i.e. token string)
+    of the node, as a vector of their children nodes.
 */
 
 #ifndef NODE_H
@@ -13,13 +13,13 @@
 #include <node.h>
 
 struct node_t {
-    /**/
+    /* represents a single node of parse tree created from user input */
     
-    std::string label;
-    std::string decoration = "";  // specific ID of token or empty
+    int level = 0;  // represents depth of current node
+    std::string label = "";  // denotes either a nonterminal, epsilon, or terminal token type
+    std::string decoration = "";  // string associated with terminal token
     
-    int level = 0;
-    std::vector<node_t*> children;
+    std::vector<node_t*> children;  // a resizable array of node's children. vector::push_back adds to these lists
 };
 
 #endif
