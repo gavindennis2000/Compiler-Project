@@ -16,7 +16,7 @@
 
 token tok;  // global token variable to be accessed by all functions
 std::ifstream * filePtr;  // global variable that points to filtered file from main
-int lineNum = 0;
+int lineNum = 1;
 
 node_t* parser(std::ifstream& filteredFile) {
     /* */
@@ -58,7 +58,6 @@ void printToken(token tok) {
     token type, its string, and its line number */
 
     // get the token type
-    return;
     std::string tokenTypeStr;
     switch (tok.tokenID) {
         case t1_tk:

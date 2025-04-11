@@ -44,10 +44,8 @@ token scanner(std::ifstream& filteredFile, int& lineNum) {
 
     // remove all white spaces at the beginning
     while (lookahead == ' ' || lookahead == '\n') {
-        // TODO
         if (lookahead == '\n') {
             lineNum++;
-            std::cout << "line num++\n";
             // discard the current whitespace, then update the lookahead
             filteredFile.ignore(1);  
             lookahead = filteredFile.peek();
@@ -63,11 +61,6 @@ token scanner(std::ifstream& filteredFile, int& lineNum) {
 
     // keep parsing characters until a token is formed
     while (state >= 0 && state <= 1000) {
-
-        // // if EOF is reached, return an EOF token
-        // if (filteredFile.eof()) {
-        //     state = 1004;
-        // }
 
         // keep finding the next state using the driver table
         int lookaheadValue = getLookaheadValue(lookahead);
@@ -106,6 +99,7 @@ token scanner(std::ifstream& filteredFile, int& lineNum) {
         }
     }
 
+    newToken.lineNum = lineNum;
     return newToken;
 }
 

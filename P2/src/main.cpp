@@ -57,6 +57,10 @@ void filter(std::ifstream& file, std::ofstream& filteredFile) {
         }
         // add filtered line to filteredFile
         filteredFile << fileLines[i];
+        if (i != fileLines.size() - 1) {
+            // add new lines until the end of file
+            filteredFile << "\n";
+        }
     }
 
     // finished filtering
