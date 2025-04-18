@@ -23,7 +23,7 @@ CFLAGS = -g -Wall -std=c++11 -Iinclude
 TARGET = build/P3
 
 # object files to create
-OBJS = build/main.o build/parser.o build/scanner.o build/testTree.o
+OBJS = build/main.o build/parser.o build/scanner.o build/testTree.o build/staticSemantics.o
 
 # default rule: build the final executable
 all: $(TARGET)
@@ -41,6 +41,8 @@ build/scanner.o: src/scanner.cpp
 	$(CC) $(CFLAGS) -c src/scanner.cpp -o build/scanner.o
 build/testTree.o: src/testTree.cpp
 	$(CC) $(CFLAGS) -c src/testTree.cpp -o build/testTree.o
+build/staticSemantics.o: src/staticSemantics.cpp
+	$(CC) $(CFLAGS) -c src/staticSemantics.cpp -o build/staticSemantics.o
 
 # clean command: clears the build folder
 clean: 
@@ -58,10 +60,6 @@ none: $(TARGET)
 test1: $(TARGET)
 	./build/P3 tests/P3_test1.txt
 
-# test1e command: makes and runs the executable with P3_test1e.txt as an argument
-test1e: $(TARGET)
-	./build/P3 tests/P3_test1e.txt
-
 # test2 command: makes and runs the executable with P3_test2.txt as an argument
 test2: $(TARGET)
 	./build/P3 tests/P3_test2.txt
@@ -69,10 +67,6 @@ test2: $(TARGET)
 # test3 command: makes and runs the executable with P3_test3.txt as an argument
 test3: $(TARGET)
 	./build/P3 tests/P3_test3.txt
-
-# test4 command: makes and runs the executable with P3_test3.txt as an argument
-test4: $(TARGET)
-	./build/P3 tests/P3_test4.txt
 
 # testGavin command: makes and runs the executable with P3_testGavin.txt as an argument
 testGavin: $(TARGET)

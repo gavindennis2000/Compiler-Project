@@ -10,6 +10,7 @@
 #define NODE_H
 
 #include <vector>
+#include <iostream>
 #include <node.h>
 
 struct node_t {

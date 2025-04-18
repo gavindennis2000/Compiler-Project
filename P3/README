@@ -2,46 +2,32 @@ README
 
 Gavin Dennis
 CS 4280
-Project 2
+Project 3
 
 Resources and documentation:
-    CS 4280 course material
-    My previous projects:
-        P0, P1
-    Stack Overflow Discussion on modifying files with fstream:
-        https://stackoverflow.com/questions/15667530/fstream-wont-create-a-file
+    This one was pretty easy. I just used my previous projects, the CS 4280 course material,
+    and some consultation with the professor.
         
 AI Usage:
-    I asked ChatGPT the following questions:
-        How do I check for EOF with std::ifstream::get()?
-            Answer: ifstream::get will return an EOF char if there aren't any characters left in the file.
-            All I had to do was make the default case return an EOFtk when nothing else matched.
+    None for this project.
         
 How to compile:
-    1. make sure you are in the "Gavin-Dennis-P2/" directory
+    1. make sure you are in the "Gavin-Dennis-P3/" directory
     2. in the terminal, run the "make" command to compile the programs
     3. Optionally, run the following commands to execute the program with the following
        test cases: (documentation about test cases at the bottom of this page)
-    * make test - runs P2 with tests/P2_test (a file that doesn't exist) as an argument
-	* make test1 - runs P2 with tests/P2_test1 as argument
-	* make test1e - runs P2 with tests/P2_test1e as argument (this one has an invalid token)
-	* make test2 - runs P2 with tests/P2_test2 as argument
-	* make test3 - runs P2 with tests/P2_test3 as argument
-	* make test4 - runs P2 with tests/P2_test4 as argument
-	* make testGavin - runs P2 with tests/P2_testGavin as argument (the most comprehensive test)
-    4. the finished executuble 'P2' can be found in the 'build' directory (Gavin-Dennis-P2/build/)
+        * make test - runs P3 with tests/P3_test (a file that doesn't exist) as an argument
+        * make test1 - runs P3 with tests/P3_test1 as argument
+        * make test2 - runs P3 with tests/P3_test2 as argument
+        * make test3 - runs P3 with tests/P3_test3 as argument
+        * make testGavin - runs P3 with tests/P3_testGavin as argument (the most comprehensive test)
+    4. the finished executuble 'P3' can be found in the 'build' directory (Gavin-Dennis-P3/build/)
 
 Problems encountered:
-    Line number issue: resolved 2025-04-11
-        I thought I was having trouble getting ifstream::get to parse new lines in order to get the
-        correct line number. As it turns out, my file filter function in main (which removes comments
-        from the original input file) wasn't adding a new line character at the end of each line. As
-        a result, the filtered file would be one long line.
+    Nothing this time.
 
 Test cases:
-    P2_test1.txt - based on example 1 from assignment specifications. A is empty.
-    P2_test1e.txt - based on test1, but is invalid so it should throw an error. Should be a parsing error and not a scanning error.
-    P2_test2.txt - based on example 2 from assignment specifications. A has a value this time.
-    P2_test3.txt - based on example 3 from assignment specifications. The first B nonterminal resolves to another S nonterminal, making it much longer.
-    P2_test4.txt - based on example 4 from assignment specifications. Only one S nonterminal and no comments, but still a complicated test.
-	P2_testGavin - my personal test case. The longest and most complicated, containing extra spaces and lines, multiple comments, and three S nonterminals.
+    P3_test1.txt - based on example 1 from assignment specifications. Defines and uses a single variable.
+    P3_test2.txt - based on example 2 from assignment specifications. Defines one variable and uses it a couple times.
+    P3_test3.txt - based on example 3 from assignment specifications. Defines one variable and attempts to use an undefined variable. Throws an error.
+	P3_testGavin - my personal test case from P2. Defines two variables and uses one of them. Has some comments which get filtered out in main.

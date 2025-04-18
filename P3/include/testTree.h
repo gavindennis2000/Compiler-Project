@@ -9,7 +9,6 @@
 #include <node.h>
 
 node_t * getNode(std::string label, int level, std::string decoration = "");
-void printTree(node_t * root);
 void destroyTree(node_t * root);
 
 #endif

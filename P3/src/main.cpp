@@ -1,7 +1,7 @@
 /*
     main.cpp
 
-    P2
+    P3
     CS 4280-001
     Gavin Dennis 
 
@@ -19,6 +19,7 @@
 #include "parser.h"  // for token parser
 #include "node.h"  // for parse tree nodes
 #include "testTree.h"  // for parse tree printing and deleting
+#include "staticSemantics.h"  // for check static semantics of parse tree
 #include <string>  // for getline functionality
 #include <fstream>  // for file handling
 #include <stdio.h>  // for remove function from c library (used to remove temp input file)
@@ -44,8 +45,8 @@ void filter(std::ifstream& file, std::ofstream& filteredFile) {
 
     // filter each line in vector
     bool commentFlag = false;
-    for (int i = 0; i < fileLines.size(); i++) {
-        for (int j = 0; j < fileLines[i].length(); j++) {
+    for (long long unsigned int i = 0; i < fileLines.size(); i++) {
+        for (long long unsigned int j = 0; j < fileLines[i].length(); j++) {
             // switch the comment flag when reaching an asterisk
             if (fileLines[i][j] == '*') {
                 commentFlag = (!commentFlag);
@@ -99,7 +100,6 @@ int main(int argc, char* argv[]) {
 
     else if (numberOfFiles == 1) {
         // if there's exactly one file, store it's name
-
         filename = argv[1];
     }
 
@@ -127,7 +127,6 @@ int main(int argc, char* argv[]) {
     std::ifstream file(filename);
     if (!file.is_open()) {
         // give an error message if file doesn't exist or just won't open
-
         std::cerr << "ERROR: File: \"" << filename << "\" won't open or doesn't exist. \n" << "Exiting program. \n";
         return 1;
     }
@@ -146,9 +145,15 @@ int main(int argc, char* argv[]) {
     // parser returns parse tree if successful
     node_t* parseTreeRoot = parser(filteredFileRead, filterFilename);
 
-    // print the parse tree, then delete it
-    std::cout << "Printing parse tree: \n";
-    printTree(parseTreeRoot);
+    // call static semantic function on tree
+    std::cout << "Checking static semantics.\n";
+    if (checkStaticSemantics(parseTreeRoot)) {
+        // if there are no errors, output the symbol table
+        std::cout << "Static semantics verified! Printing symbol table:\n";
+        printSymbolTable();
+    }
+
+    // delete the parse tree
     destroyTree(parseTreeRoot);
 
     // the scanner is finished; close the read-only filtered file
