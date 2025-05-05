@@ -1,0 +1,14 @@
+
+
+                ( 
+                                ( *first comment
+still in a comment* # +39 ! +39 ) (
+        $ a123 # * another comment * +123
+) *
+one
+last
+comment 
+*
+
+
+)

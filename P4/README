@@ -1,0 +1,33 @@
+README
+
+Gavin Dennis
+CS 4280
+Project 3
+
+Resources and documentation:
+    This one was pretty easy. I just used my previous projects, the CS 4280 course material,
+    and some consultation with the professor.
+        
+AI Usage:
+    None for this project.
+        
+How to compile:
+    1. make sure you are in the "Gavin-Dennis-P3/" directory
+    2. in the terminal, run the "make" command to compile the programs
+    3. Optionally, run the following commands to execute the program with the following
+       test cases: (documentation about test cases at the bottom of this page)
+        * make test - runs P3 with tests/P3_test (a file that doesn't exist) as an argument
+        * make test1 - runs P3 with tests/P3_test1 as argument
+        * make test2 - runs P3 with tests/P3_test2 as argument
+        * make test3 - runs P3 with tests/P3_test3 as argument
+        * make testGavin - runs P3 with tests/P3_testGavin as argument (the most comprehensive test)
+    4. the finished executuble 'P3' can be found in the 'build' directory (Gavin-Dennis-P3/build/)
+
+Problems encountered:
+    Nothing this time.
+
+Test cases:
+    P3_test1.txt - based on example 1 from assignment specifications. Defines and uses a single variable.
+    P3_test2.txt - based on example 2 from assignment specifications. Defines one variable and uses it a couple times.
+    P3_test3.txt - based on example 3 from assignment specifications. Defines one variable and attempts to use an undefined variable. Throws an error.
+	P3_testGavin - my personal test case from P2. Defines two variables and uses one of them. Has some comments which get filtered out in main.
