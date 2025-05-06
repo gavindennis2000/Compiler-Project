@@ -91,7 +91,7 @@ int main(int argc, char* argv[]) {
                 << "scanner match BNF Grammer. If tokens match, a parse tree is returned, then the static \n"
                 << "semantics of the program are verified while tokens are converted into assembly code. \n"
                 << "If the semantics are successfully verified, the code will be outputted to a file called \n"
-                << "{inputfile}.asm, where \"inputfile\" is the name fo the file passed as argument (out.asm for cin). \n";
+                << "[inputfile].asm, where \"inputfile\" is the name of the file passed as argument (out.asm for cin). \n";
 
     // check for command line arguments
     int numberOfFiles = argc - 1;
@@ -151,6 +151,7 @@ int main(int argc, char* argv[]) {
 
     // provide the file to parser and let it handle the rest
     // parser returns parse tree if successful
+    std::cout << "\n" << "Parsing input...\n";
     node_t* parseTreeRoot = parser(filteredFileRead, filterFilename);
 
     // open the file for assembly code output
@@ -158,12 +159,15 @@ int main(int argc, char* argv[]) {
 
     // call static semantic function on tree
     // this is where the assembly code will be generated
-    std::cout << "Checking static semantics.\n";
+    std::cout << "\n" << "Checking static semantics...\n";
     if (checkStaticSemantics(parseTreeRoot, assemblyCode)) {
         // add the process table to the end of the assembly code file
         std::cout << "Static semantics verified! \n";
         printSymbolTable(assemblyCode);
     }
+
+    // tell the user where their new assembly code
+    std::cout << "\n" << "Assembly code outputted to \"" << assemblyFilename << "\".\n";
 
     // delete the parse tree
     destroyTree(parseTreeRoot);

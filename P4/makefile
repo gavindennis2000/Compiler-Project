@@ -68,9 +68,19 @@ test2: $(TARGET)
 test3: $(TARGET)
 	./build/P4 tests/P4_test3.txt
 
+# test4 command: makes and runs the executable with P3_test3.txt as an argument
+test4: $(TARGET)
+	./build/P4 tests/P4_test4.txt
+
 # testGavin command: makes and runs the executable with P3_testGavin.txt as an argument
 testGavin: $(TARGET)
 	./build/P4 tests/P4_testGavin.txt
+
+testAll: $(TARGET)
+	./build/P4 tests/P4_test1.txt
+	./build/P4 tests/P4_test2.txt
+	./build/P4 tests/P4_test3.txt
+	./build/P4 tests/P4_test4.txt
 
 # debug command: runs with GNU Debugger
 debug: $(TARGET)

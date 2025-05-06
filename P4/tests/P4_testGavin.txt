@@ -1,14 +1,2 @@
-
-
-                ( 
-                                ( *first comment
-still in a comment* # +39 ! +39 ) (
-        $ a123 # * another comment * +123
-) *
-one
-last
-comment 
-*
-
-
-)
+* based on P2 test 4 but different *
+" +91 ( ' j10 +91 W3 $ & J100 +91 +91 % J100 )
