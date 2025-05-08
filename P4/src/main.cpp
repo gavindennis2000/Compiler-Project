@@ -12,9 +12,10 @@
     passes to parser. Parser repeatedly calls scanner while ensuring that BNF grammar
     is followed. parsed tokens are converted into nodes in a parse tree structure.
     After a successful parse, the tree root is returned to main where the static
-    semantics are verified. Throughout token verification, assembly code will be
-    written and added to the file [inputFile].asm where inputFile is the name of
+    semantics are verified. Throughout semantic verification, assembly code will be
+    written and added to the file [inputFile].asm, where inputFile is the name of
     the argument provided to the program (out.asm if user input from cin is used).
+    The generated code should run on the UMSL ASM Interpreter.
 
 */
 

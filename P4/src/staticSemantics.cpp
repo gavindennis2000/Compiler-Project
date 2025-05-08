@@ -30,12 +30,12 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
     if (root->label == "t1" || root->label == "t2" || root->label == "t3") {
         tokenList.push_back(root->decoration);
     }
-    if (tokenList.size() > 0) {
-        std::cout << "\nToken list: " << tokenList.size() << "\n";
-        for (long long unsigned int i = 0; i < tokenList.size(); i++) {
-            std::cout << tokenList[i] << "\n";
-        }
-    }
+    // if (tokenList.size() > 0) {
+    //     std::cout << "\nToken list: " << tokenList.size() << "\n";
+    //     for (long long unsigned int i = 0; i < tokenList.size(); i++) {
+    //         std::cout << tokenList[i] << "\n";
+    //     }
+    // }
 
     // store the current operator and predict situations where variables will be declared
     if (root->label == "t1") {
@@ -97,7 +97,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             // determine what is happening with the current variable and
             // generate the assembly code for it
             if (tokenList.front() == "!") {
-                // negate operator multiplies by negative one
+                // negate operator multiplies variable by negative one
                 assembly << "LOAD " << tokenList.back() << "\n"
                          << "MULT -1" << "\n"
                          << "STORE " << tokenList.back() << "\n";
@@ -138,21 +138,21 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                 else if (tokenList.size() == 4) {
                     // third arg
                     // skip the for loop if the accumulator isn't positive
-                    assembly << "BRZNEG SKIP" << "\n";
+                    assembly << "BRZNEG SKIP" << ++numOfLoops << "\n";
                     // find out how many times to run the loop
                     numOfTempVars++;
-                    numOfLoops++;
+                    // numOfLoops++;
                     assembly << "LOAD " << tokenList[3] << "\n"
                                 << "STORE TEMP" << numOfTempVars << "\n"
                                 // skip the loop if the third argument is non-positive
-                                << "BRZNEG SKIP" << "\n"
+                                << "BRZNEG SKIP" << numOfLoops << "\n"
                                 << "LOOP" << numOfLoops << ": SUB1" << "\n"
                                 << "STORE TEMP" << numOfTempVars << "\n";
                 }
                 else if (tokenList.size() == 5) {
                     // the fourth arg is an operation, so there's nothing here
-                    backtrace = true;
-                    tokenList.clear();//todoTODO
+                    backtrace = numOfTempVars;
+                    tokenList.clear();
                 }
             }
         }
@@ -163,7 +163,14 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
 
         // decide if t3 integer is positive or negative by checking if the first letter is uppercase
         char firstChar = tokenList.back()[0];
-        if (tokenList.back().length() >= 3 && tokenList.back()[1] == '0' && tokenList.back()[2] == '0') {
+        if (tokenList.front() == "!") {
+            // negate operator multiplies integer by negative one
+            assembly << "LOAD " << tokenList.back() << "\n"
+                     << "MULT -1" << "\n";
+                    //  << "STORE " << tokenList.back() << "\n";
+            tokenList.clear();
+        }
+        else if (tokenList.back().length() >= 3 && tokenList.back()[1] == '0' && tokenList.back()[2] == '0') {
             // tokens proceeded by at least two zeroes represent zero
             tokenList.back() = "0";
         }

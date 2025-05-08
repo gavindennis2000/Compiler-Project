@@ -2,32 +2,37 @@ README
 
 Gavin Dennis
 CS 4280
-Project 3
+Project 4
 
 Resources and documentation:
-    This one was pretty easy. I just used my previous projects, the CS 4280 course material,
-    and some consultation with the professor.
+    I used my previous projects, the course material, and some documentation from cplusplus.com:
+        Vector documentation:
+            https://cplusplus.com/reference/vector/vector/erase/#google_vignette
         
 AI Usage:
-    None for this project.
+    I asked ChatGPT how to get rid of an annoying sidebar in VS Code and it gave me the wrong answer.
         
 How to compile:
-    1. make sure you are in the "Gavin-Dennis-P3/" directory
+    1. make sure you are in the "Gavin-Dennis-P4/" directory
     2. in the terminal, run the "make" command to compile the programs
     3. Optionally, run the following commands to execute the program with the following
        test cases: (documentation about test cases at the bottom of this page)
-        * make test - runs P3 with tests/P3_test (a file that doesn't exist) as an argument
-        * make test1 - runs P3 with tests/P3_test1 as argument
-        * make test2 - runs P3 with tests/P3_test2 as argument
-        * make test3 - runs P3 with tests/P3_test3 as argument
-        * make testGavin - runs P3 with tests/P3_testGavin as argument (the most comprehensive test)
-    4. the finished executuble 'P3' can be found in the 'build' directory (Gavin-Dennis-P3/build/)
+        * make none - runs P4 with tests/P4_test (a file that doesn't exist) as an argument
+        * make test - runs P4 with cin instead of a file
+        * make test1 - runs P4 with tests/P4_test1 as argument
+        * make test2 - runs P4 with tests/P4_test2 as argument
+        * make test3 - runs P4 with tests/P4_test3 as argument
+        * make testGavin - runs P4 with tests/P4_testGavin as argument (the most comprehensive test)
+    4. the finished executuble 'P4' can be found in the 'build' directory (Gavin-Dennis-P4/build/)
 
 Problems encountered:
-    Nothing this time.
+    Nested operations and the loop construct were very tricky. I implemented what I would consider a workaround as I'm not sure if it was the correct way. However, my program passed all four test cases from P2 including the one with the for loop (Test 4). My personal test file, testGavin, successfully demonstrated that the for loop will not go through if arg2 is less than arg1, or if arg3 is non-positive.
+
+    Besides that, I haven't tried extensive testing with nested operations or multiple loops. I'm concerned about edge cases causing problems, but at this point I don't have the time to check all the small details.
 
 Test cases:
-    P3_test1.txt - based on example 1 from assignment specifications. Defines and uses a single variable.
-    P3_test2.txt - based on example 2 from assignment specifications. Defines one variable and uses it a couple times.
-    P3_test3.txt - based on example 3 from assignment specifications. Defines one variable and attempts to use an undefined variable. Throws an error.
-	P3_testGavin - my personal test case from P2. Defines two variables and uses one of them. Has some comments which get filtered out in main.
+    P4_test1.txt - based on test example 1 from P2.
+    P4_test2.txt - based on test example 2 from P2.
+    P4_test3.txt - based on test example 3 from P2.
+    P4_test4.txt - based on test example 4 from P2.
+	P4_testGavin - based on test example 4 from P2 with modifications to verify the for loop works with other parameters.
