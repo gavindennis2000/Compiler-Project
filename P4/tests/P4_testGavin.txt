@@ -1,1 +1,53 @@
-" +10 ( " +20 ( ' A01 Z0055 +10 # +30 $ +10 ) ' A20 a21 X69 $ & D420 +10 )
+* note, try messing around with more nested addition operators to ensure your program can handle any number of them *
+
+"+10 ( "+20 ( +10 % & A500 b003 ' +10 +20 +10 $ & & & Z300 & z200 +10 z50 +20) ! a10 ) 
+
+*
+S
+    A
+        "+10
+    (
+    B
+        S 
+            A 
+                "+20
+            (
+            B 
+                G
+                    +10
+                    %
+                    F
+                        &
+                        F
+                            A500
+                        F
+                            b003
+            B
+                E 
+                    '
+                    F
+                        +10
+                    F
+                        +20
+                    F
+                        +10
+                    B
+                        C
+                            $
+                            F
+                                &
+                                F
+                                    Z300
+                                F
+                                    &
+                                    F
+                                        z200
+                                    F
+                                        z50
+            )
+    B
+        !
+        F
+            +10
+    )
+*
