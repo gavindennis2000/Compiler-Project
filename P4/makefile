@@ -81,6 +81,7 @@ testAll: $(TARGET)
 	./build/P4 tests/P4_test2.txt
 	./build/P4 tests/P4_test3.txt
 	./build/P4 tests/P4_test4.txt
+	./build/P4 tests/P4_testGavin.txt
 
 # debug command: runs with GNU Debugger
 debug: $(TARGET)

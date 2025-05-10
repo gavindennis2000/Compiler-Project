@@ -26,13 +26,19 @@ How to compile:
     4. the finished executuble 'P4' can be found in the 'build' directory (Gavin-Dennis-P4/build/)
 
 Problems encountered:
-    Nested operations and the loop construct were very tricky. I implemented what I would consider a workaround as I'm not sure if it was the correct way. However, my program passed all four test cases from P2 including the one with the for loop (Test 4). My personal test file, testGavin, successfully demonstrated that the for loop will not go through if arg2 is less than arg1, or if arg3 is non-positive.
+    Nested operations and the loop construct were very tricky. I implemented what I would consider a workaround as I'm not sure this was the proper way.
+    However, my program passed all four test cases from P2 including the one with the for loop (Test 4). My personal test files showed that my program could
+    handle multiple loops, including ones that get skipped due to having a non-positive value or having a non-positive amount of loop iterations.
 
-    Besides that, I haven't tried extensive testing with nested operations or multiple loops. I'm concerned about edge cases causing problems, but at this point I don't have the time to check all the small details.
+    After several hours of deep thought, I was able to get nested addition to
+    work using a stack structure. Again, not sure if this was the intended fix, but
+    it seemed to get the job done for several hard test cases.
 
 Test cases:
     P4_test1.txt - based on test example 1 from P2.
     P4_test2.txt - based on test example 2 from P2.
     P4_test3.txt - based on test example 3 from P2.
     P4_test4.txt - based on test example 4 from P2.
-	P4_testGavin - based on test example 4 from P2 with modifications to verify the for loop works with other parameters.
+	P4_testGavin - My personal test file. I tried to make it as
+                   complicated as I reasonably could with my limited
+                   time and motivation.

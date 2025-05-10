@@ -19,10 +19,12 @@
 std::vector<std::string> symbolTable;  // initialize symbol table as a global vector
 int numOfTempVars = 0;  // a list of temp variables used for for loops
 int numOfLoops = 0;  // how many loops have been created in the assembly code
-int loopArg = 1;  // keeps track of arguments for conditional for loops
-bool declareVariable = false;  // flag used to check if variable is being declared or used
+int loopArgs = -1;  // keeps track of arguments for conditional for loops; -1 implies no loop at the moment
 int backtrace = 0;  // used to return through a loop. holds the value of the loop temp variable
+bool declareVariable = false;  // flag used to check if variable is being declared or used
 bool printNext = false;  // used when operations are nested inside the WRITE operator
+bool continueSum = false;  //  used to ensure accumulator isn't overwritten during nested addition
+bool negateNext = false;  // used to negate the result of a sum or several sums
 std::string assignTo = "";  // used to store an identifier where the result of the next operation is assigned
 std::vector<std::string> tokenList;  // keeps track of previous tokens. Used for sums, assignments, and loops mostly
 std::stack<std::string> addNest;  // keeps track of nested addition operations
@@ -58,7 +60,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             tokenList.clear();
             tokenList.push_back(root->decoration);
             // after the next operation is performed, set up a return to the loop
-            backtrace = numOfTempVars;
+            backtrace = numOfLoops;
         }
         else if (tokenList.front() == "$" && tokenList.size() >= 2) {
             // if the next token hasn't been written, remove the $
@@ -70,6 +72,13 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             // prepare to assign the next result of the next operation to an identifier
             assignTo = tokenList.front();
             tokenList.clear();
+        }
+        else if (tokenList.front() == "!" && tokenList.back() == "&") {
+            // handle the negation of a sum (or several sums)
+            tokenList.erase(tokenList.begin(), tokenList.begin() + 1);
+            // negation will be added after the sum is taken care of
+            negateNext = true;
+            
         }
         else if (tokenList.front() == "&" && tokenList.back() == "&" && tokenList.size() > 1) {
             // handle nested addition
@@ -144,8 +153,18 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             else if (tokenList.front() == "&" && tokenList.size() == 3) {
                 // write assembly code for addition operation. the result
                 // gets left in the accumulator
+
+                // if there is nested addition, make sure the result isn't overrided
+                if (continueSum) {
+                    assembly << "STORE TEMP" << ++numOfTempVars << "\n";
+                }
+                // perform the normal addition
                 assembly << "LOAD " << tokenList[1] << "\n"
                          << "ADD " << tokenList[2] << "\n";
+                // if a temp variable was created, add it to the result now
+                if (continueSum) {
+                    assembly << "ADD TEMP" << numOfTempVars << "\n";
+                }
                 // check if the result is assigned to anything
                 if (!assignTo.empty()) {
                     assembly << "STORE " << assignTo << "\n";
@@ -167,7 +186,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                     // the first argument
                     assembly << "LOAD " << tokenList[1] << "\n";
                 }
-                else if (tokenList.size() == 3) {
+                else if (tokenList.size() == 3 && tokenList[1] != "&") {
                     // the second argument
                     assembly << "SUB " << tokenList[2] << "\n";
                 }
@@ -175,15 +194,12 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                     // third arg
                     // skip the for loop if the accumulator isn't positive
                     assembly << "BRZNEG SKIP" << ++numOfLoops << "\n";
-                    // find out how many times to run the loop
-                    numOfTempVars++;
-                    // numOfLoops++;
                     assembly << "LOAD " << tokenList[3] << "\n"
-                                << "STORE TEMP" << numOfTempVars << "\n"
+                                << "STORE ITER" << numOfLoops << "\n"
                                 // skip the loop if the third argument is non-positive
                                 << "BRZNEG SKIP" << numOfLoops << "\n"
                                 << "LOOP" << numOfLoops << ": SUB 1" << "\n"
-                                << "STORE TEMP" << numOfTempVars << "\n";
+                                << "STORE ITER" << numOfLoops << "\n";
                 }
                 else if (tokenList.size() == 5) {
                     // the fourth arg is an operation, so there's nothing here
@@ -229,9 +245,17 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             tokenList.clear();
         }
         else if (tokenList.front() == "&" && tokenList.size() == 3) {
-            // write assembly code for addition operation
+            // if there is nested addition, make sure the result isn't overrided
+            if (continueSum) {
+                assembly << "STORE TEMP" << ++numOfTempVars << "\n";
+            }
+            // perform the normal addition
             assembly << "LOAD " << tokenList[1] << "\n"
-                     << "ADD " << tokenList.back() << "\n";
+                     << "ADD " << tokenList[2] << "\n";
+            // if a temp variable was created, add it to the result now
+            if (!addNest.empty()) {
+                assembly << "ADD TEMP" << numOfTempVars << "\n";
+            }
             // check if the result is assigned to anything
             if (!assignTo.empty()) {
                 assembly << "STORE " << assignTo << "\n";
@@ -272,11 +296,11 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                 numOfTempVars++;
                 numOfLoops++;
                 assembly << "LOAD " << tokenList[3] << "\n"
-                            << "STORE TEMP" << numOfTempVars << "\n"
+                            << "STORE ITER" << numOfLoops << "\n"
                             // skip the loop if the third argument is non-positive
                             << "BRZNEG SKIP" << numOfLoops << "\n"
                             << "LOOP" << numOfLoops << ": SUB 1" << "\n"
-                            << "STORE TEMP" << numOfTempVars<< "\n";
+                            << "STORE ITER" << numOfLoops<< "\n";
             }
             else if (tokenList.size() == 5) {
                 // the fourth arg is an operation, so there's nothing here
@@ -305,6 +329,20 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             // if neither of these can happen, break out of the infinite loop
             break;
         }
+        // if an operation goes through, make sure the accumulator isn't overwritten
+        if (!addNest.empty()) {
+            continueSum = true;
+        }
+        else {
+            continueSum = false;
+        }
+    }
+
+    if (negateNext && tokenList.empty() && addNest.empty()) {
+        // multiply the result of a sum by negative 1 and leave
+        // it in the accumulator
+        negateNext = false;
+        assembly << "MULT -1" << "\n";
     }
 
     if (printNext && tokenList.empty() && addNest.empty()) {
@@ -317,7 +355,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
     // handle loop returns
     if (backtrace > 0 && tokenList.empty() && addNest.empty()) {
         // set up a return to the loop
-        assembly << "LOAD TEMP" << backtrace << "\n"
+        assembly << "LOAD ITER" << backtrace << "\n"
                  << "BRPOS LOOP" << numOfLoops << "\n"
                  << "SKIP" << numOfLoops << ": NOOP" << "\n";
         backtrace = 0;
@@ -375,6 +413,10 @@ void printSymbolTable(std::ofstream& assembly) {
         symbolToVariable.replace(0, 1, "P");
         // assign each variable the value 0
         assembly << symbolToVariable << " 0" << "\n";
+    }
+    // loop iterators
+    for (int i = 1; i <= numOfLoops; i++) {
+        assembly << "ITER" << i << " 0" << "\n";
     }
     // temp variables
     for (int i = 1; i <= numOfTempVars; i++) {
