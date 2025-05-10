@@ -44,6 +44,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             std::cout << tokenList[i] << "\n";
         }
     }
+    else std::cout << "Empty tokenlist\n";
 
     // store the current operator and predict situations where variables will be declared
     if (root->label == "t1") {
@@ -56,11 +57,21 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             tokenList.clear();
         }
         else if (tokenList.front() == "\'") {
+            // make sure loop arg counter is setup
+            if (loopArgs == -1) {
+                loopArgs = 0;
+            }
             // if an operation is found after a for loop, clear the token list up to this point
             tokenList.clear();
             tokenList.push_back(root->decoration);
             // after the next operation is performed, set up a return to the loop
-            backtrace = numOfLoops;
+            if (loopArgs >= 3) {
+                backtrace = numOfLoops;
+                // assembly << "\tSetting backtrace to " << backtrace << "\n";
+            }
+            else {
+                // assembly << "\tLoopArg is: " << loopArgs << "\n";
+            }
         }
         else if (tokenList.front() == "$" && tokenList.size() >= 2) {
             // if the next token hasn't been written, remove the $
@@ -182,31 +193,45 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             }
             else if (tokenList.front() == "\'") {
                 // gather the temporary variables for the conditional for loop
-                if (tokenList.size() == 2) {
+                if (loopArgs == 0) {
                     // the first argument
-                    assembly << "LOAD " << tokenList[1] << "\n";
+                    assembly << "LOAD " << tokenList[1] << "\n"
+                             << "STORE ARG" << ++loopArgs << "\n";
+                    // clear the token from the list
+                    tokenList.erase(tokenList.end());
                 }
-                else if (tokenList.size() == 3 && tokenList[1] != "&") {
+                else if (loopArgs == 1) {
                     // the second argument
-                    assembly << "SUB " << tokenList[2] << "\n";
-                }
-                else if (tokenList.size() == 4) {
-                    // third arg
+                    assembly << "LOAD " << tokenList[1] << "\n"
+                             << "STORE ARG" << ++loopArgs << "\n";
                     // skip the for loop if the accumulator isn't positive
-                    assembly << "BRZNEG SKIP" << ++numOfLoops << "\n";
-                    assembly << "LOAD " << tokenList[3] << "\n"
-                                << "STORE ITER" << numOfLoops << "\n"
-                                // skip the loop if the third argument is non-positive
-                                << "BRZNEG SKIP" << numOfLoops << "\n"
-                                << "LOOP" << numOfLoops << ": SUB 1" << "\n"
-                                << "STORE ITER" << numOfLoops << "\n";
+                    assembly << "LOAD ARG1" << "\n"
+                             << "SUB ARG2" << "\n"
+                             << "BRZNEG SKIP" << ++numOfLoops << "\n";
+                    // clear the token from the list
+                    tokenList.erase(tokenList.end());
                 }
-                else if (tokenList.size() == 5) {
+                else if (loopArgs == 2) {
+                    // third arg
+                    // find out how many times to run the loop
+                    assembly << "LOAD " << tokenList.back() << "\n"
+                             << "STORE ITER" << numOfLoops << "\n"
+                             // skip the loop if the third argument is non-positive
+                             << "BRZNEG SKIP" << numOfLoops << "\n"
+                             << "LOOP" << numOfLoops << ": SUB 1" << "\n"
+                             << "STORE ITER" << numOfLoops<< "\n";
+                    // increment the number of loop args
+                    loopArgs++;
+                    // clear the token from the list
+                    tokenList.erase(tokenList.end());
+                }
+                else if (loopArgs >= 3) {
                     // the fourth arg is an operation, so there's nothing here
-                    // set the backtrace so the return destination can be looped
-                    backtrace = numOfTempVars;
-                    tokenList.clear();
+                    loopArgs++;
+                    tokenList.clear();//todoTODO
+                    tokenList.push_back("\'");
                 }
+                // assembly << "\tLoopargs: " << loopArgs << "\n";
             }
         }
     }
@@ -227,6 +252,17 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         else {
             // positive integer
             tokenList.back().replace(0, 1, "");
+        }
+
+        // fix numbers that have a starting 0 (e.g. 05)
+        // this is purely for aesthetics as the program works fine without it
+        if (tokenList.back().length() > 1) {
+            if (tokenList.back()[0] == '0') {
+                tokenList.back().erase(0, 1);
+            }
+            else if (tokenList.back()[0] == '-' && tokenList.back()[1] == '0') {
+                tokenList.back().erase(1, 1);
+            }
         }
 
         // check the current operator and see what work needs to be done
@@ -253,7 +289,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             assembly << "LOAD " << tokenList[1] << "\n"
                      << "ADD " << tokenList[2] << "\n";
             // if a temp variable was created, add it to the result now
-            if (!addNest.empty()) {
+            if (continueSum) {
                 assembly << "ADD TEMP" << numOfTempVars << "\n";
             }
             // check if the result is assigned to anything
@@ -280,36 +316,49 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         }
         else if (tokenList.front() == "\'") {
             // gather the temporary variables for the conditional for loop
-            if (tokenList.size() == 2) {
+            if (loopArgs == 0) {
                 // the first argument
-                assembly << "LOAD " << tokenList[1] << "\n";
+                assembly << "LOAD " << tokenList[1] << "\n"
+                         << "STORE ARG" << ++loopArgs << "\n";
+                // clear the token from the list
+                tokenList.erase(tokenList.end());
             }
-            else if (tokenList.size() == 3) {
+            else if (loopArgs == 1) {
                 // the second argument
-                assembly << "SUB " << tokenList[2] << "\n";
-            }
-            else if (tokenList.size() == 4) {
-                // third arg
+                assembly << "LOAD " << tokenList[1] << "\n"
+                         << "STORE ARG" << ++loopArgs << "\n";
                 // skip the for loop if the accumulator isn't positive
-                assembly << "BRZNEG SKIP" << numOfLoops + 1 << "\n";
+                assembly << "LOAD ARG1" << "\n"
+                         << "SUB ARG2" << "\n"
+                         << "BRZNEG SKIP" << ++numOfLoops << "\n";
+                // clear the token from the list
+                tokenList.erase(tokenList.end());
+            }
+            else if (loopArgs == 2) {
+                // third arg
                 // find out how many times to run the loop
-                numOfTempVars++;
-                numOfLoops++;
-                assembly << "LOAD " << tokenList[3] << "\n"
-                            << "STORE ITER" << numOfLoops << "\n"
-                            // skip the loop if the third argument is non-positive
-                            << "BRZNEG SKIP" << numOfLoops << "\n"
-                            << "LOOP" << numOfLoops << ": SUB 1" << "\n"
-                            << "STORE ITER" << numOfLoops<< "\n";
+                assembly << "LOAD " << tokenList.back() << "\n"
+                         << "STORE ITER" << numOfLoops << "\n"
+                         // skip the loop if the third argument is non-positive
+                         << "BRZNEG SKIP" << numOfLoops << "\n"
+                         << "LOOP" << numOfLoops << ": SUB 1" << "\n"
+                         << "STORE ITER" << numOfLoops<< "\n";
+                // increment the number of loop args
+                loopArgs++;
+                // clear the token from the list
+                tokenList.erase(tokenList.end());
             }
-            else if (tokenList.size() == 5) {
+            else if (loopArgs >= 3) {
                 // the fourth arg is an operation, so there's nothing here
+                loopArgs++;
                 tokenList.clear();//todoTODO
+                tokenList.push_back("\'");
             }
+            // assembly << "\tLoopargs: " << loopArgs << "\n";
         }
     }
 
-    // handle nested operations
+    // handle nested operations and intraloop operations
     while (!addNest.empty()) {
         // handle any nested additions remaining
         if (!tokenList.empty() && addNest.top() == "&" && tokenList.front() != "&") {
@@ -338,6 +387,37 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         }
     }
 
+    if (tokenList.empty() && loopArgs != -1) {
+        switch(loopArgs) {
+            case 0:
+                assembly << "STORE ARG" << ++loopArgs << "\n";
+                // clear the token from the list
+                // tokenList.erase(tokenList.end());
+                tokenList.push_back("\'");
+                break;
+            case 1:
+                assembly << "STORE ARG" << ++loopArgs << "\n";
+                // skip the for loop if the accumulator isn't positive
+                assembly << "LOAD ARG1" << "\n"
+                         << "SUB ARG2" << "\n"
+                         << "BRZNEG SKIP" << ++numOfLoops << "\n";
+                // clear the token from the list
+                // tokenList.erase(tokenList.end());
+                tokenList.push_back("\'");
+                break;
+            case 2:
+                // find the difference of arg 1 and arg2, then calculate arg3 (the iterator)
+                loopArgs++;
+                assembly << "STORE ITER" << numOfLoops << "\n";
+                tokenList.push_back("\'");
+                // skip the loop if the third argument is non-positive
+                assembly << "BRZNEG SKIP" << numOfLoops << "\n"
+                         << "LOOP" << numOfLoops << ": SUB 1" << "\n"
+                         << "STORE ITER" << numOfLoops<< "\n";
+                break;
+        }
+    }
+
     if (negateNext && tokenList.empty() && addNest.empty()) {
         // multiply the result of a sum by negative 1 and leave
         // it in the accumulator
@@ -359,6 +439,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                  << "BRPOS LOOP" << numOfLoops << "\n"
                  << "SKIP" << numOfLoops << ": NOOP" << "\n";
         backtrace = 0;
+        loopArgs = -1;
     }
 
     // recursively traverse tree
@@ -413,6 +494,11 @@ void printSymbolTable(std::ofstream& assembly) {
         symbolToVariable.replace(0, 1, "P");
         // assign each variable the value 0
         assembly << symbolToVariable << " 0" << "\n";
+    }
+    // loop argument temps
+    if (numOfLoops > 0) {
+        assembly << "ARG1 0" << "\n"
+                 << "ARG2 0" << "\n";
     }
     // loop iterators
     for (int i = 1; i <= numOfLoops; i++) {
