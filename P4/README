@@ -10,18 +10,19 @@ Resources and documentation:
             https://cplusplus.com/reference/vector/vector/erase/#google_vignette
         
 AI Usage:
-    I asked ChatGPT how to get rid of an annoying sidebar in VS Code and it gave me the wrong answer.
+    I only used Chat GPT for quick documentation on vector and stack methods.
         
 How to compile:
     1. make sure you are in the "Gavin-Dennis-P4/" directory
     2. in the terminal, run the "make" command to compile the programs
     3. Optionally, run the following commands to execute the program with the following
        test cases: (documentation about test cases at the bottom of this page)
-        * make none - runs P4 with tests/P4_test (a file that doesn't exist) as an argument
+        * make none - runs P4 with tests/P4_test1 (a file that doesn't exist) as an argument
         * make test - runs P4 with cin instead of a file
         * make test1 - runs P4 with tests/P4_test1 as argument
         * make test2 - runs P4 with tests/P4_test2 as argument
         * make test3 - runs P4 with tests/P4_test3 as argument
+        * make test4 - runs P4 with tests/P4_test4 as argument
         * make testGavin - runs P4 with tests/P4_testGavin as argument (the most comprehensive test)
     4. the finished executuble 'P4' can be found in the 'build' directory (Gavin-Dennis-P4/build/)
 
@@ -34,6 +35,10 @@ Problems encountered:
     work using a stack structure. Again, not sure if this was the intended fix, but
     it seemed to get the job done for several hard test cases.
 
+    I'm not super proud of this work compared to my previous projects, but I did the best I could with my busy schedule.
+    I'm happy that I didn't need to use any AI generated code and felt like I learned alot throughout the creation
+    of this project.
+
 Test cases:
     P4_test1.txt - based on test example 1 from P2.
     P4_test2.txt - based on test example 2 from P2.
@@ -41,4 +46,4 @@ Test cases:
     P4_test4.txt - based on test example 4 from P2.
 	P4_testGavin - My personal test file. I tried to make it as
                    complicated as I reasonably could with my limited
-                   time and motivation.
+                   time

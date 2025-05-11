@@ -42,13 +42,6 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
     if (root->label == "t1" || root->label == "t2" || root->label == "t3") {
         tokenList.push_back(root->decoration);
     }
-    if (tokenList.size() > 0) {
-        std::cout << "\nToken list: " << tokenList.size() << "\n";
-        for (long long unsigned int i = 0; i < tokenList.size(); i++) {
-            std::cout << tokenList[i] << "\n";
-        }
-    }
-    else std::cout << "Empty tokenlist\n";
 
     // store the current operator and predict situations where variables will be declared
     if (root->label == "t1") {
@@ -71,10 +64,6 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             // after the next operation is performed, set up a return to the loop
             if (loopArgs >= 3) {
                 backtrace = numOfLoops;
-                // assembly << "\tSetting backtrace to " << backtrace << "\n";
-            }
-            else {
-                // assembly << "\tLoopArg is: " << loopArgs << "\n";
             }
         }
         else if (tokenList.front() == "$" && tokenList.size() >= 2) {
@@ -101,13 +90,11 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                 // e.g. & & x13 a13 +14 -> The sum of (the sum of two numbers) and a single number
                 // store the first addition operator in the stack
                 addNest.push(tokenList.front());
-                assembly << "\tPushing104 " << addNest.top() << " to add nest. size: " << addNest.size() << "\n";
                 tokenList.erase(tokenList.begin(), tokenList.begin() + 1);
             }
             else {
                 // e.g. & x13 & a13 +14 -> The sum of a number and (the sum of two numbers)
                 addNest.push(tokenList[1]);
-                assembly << "\tPushing110 " << addNest.top() << " to add nest. size: " << addNest.size() << "\n";
                 // remove the first two elements of tokenList since they're stored
                 tokenList.erase(tokenList.begin(), tokenList.begin() + 2);
             }
@@ -236,7 +223,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                 else if (loopArgs >= 3) {
                     // the fourth arg is an operation, so there's nothing here
                     loopArgs++;
-                    tokenList.clear();//todoTODO
+                    tokenList.clear();
                     tokenList.push_back("\'");
                 }
             }
@@ -311,7 +298,6 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         }
         else if (tokenList.front() == "$" && tokenList.size() == 2) {
             // if the number is alone with a write operator, write to the screen
-            // TODO - take care of the Fs
             assembly << "WRITE " << tokenList.back() << "\n";
             // reset token list
             tokenList.clear();
@@ -360,7 +346,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             else if (loopArgs >= 3) {
                 // the fourth arg is an operation, so there's nothing here
                 loopArgs++;
-                tokenList.clear();//todoTODO
+                tokenList.clear();
                 tokenList.push_back("\'");
             }
         }
@@ -372,7 +358,6 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         if (!tokenList.empty() && addNest.top() == "&" && tokenList.front() != "&") {
             // if two addition ops were back to back, store the result of the rightmost
             // operation in a temp variable, then add them to the token vector
-            assembly << "\tPopping375 " << addNest.top() << " from add nest. size: " << addNest.size() - 1 << "\n";
             addNest.pop();
             assembly << "ADD " << tokenList.front() << "\n";
             tokenList.clear();
@@ -381,13 +366,11 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             // if an integer or identifier was wedged between two additions, just add it to
             // the current result
             assembly << "ADD " << addNest.top() << "\n";
-            assembly << "\tPopping384 " << addNest.top() << " from add nest. size: " << addNest.size() - 1 << "\n";
             addNest.pop();
         }
         else {
             // if neither of these can happen, break out of the infinite loop
             if (sumCalculated) {
-                assembly << "\tSum calc was true\n";
                 sumCalculated = false;
                 continueSum = true;
             }
@@ -396,7 +379,6 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         // if an operation goes through, make sure the accumulator isn't overwritten
         if (!addNest.empty() && addNest.top() == "&" && sumCalculated) {
             continueSum = true;
-            assembly << "\tPopping399 " << addNest.top() << " from add nest. size: " << addNest.size() - 1 << "\n";
             addNest.pop();
         }
         else {
@@ -442,17 +424,11 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         assembly << "MULT -1" << "\n";
     }
 
-    if (printNext && tokenList.empty() && addNest.empty() && !sumCalculated) {
+    if (printNext && tokenList.empty() && addNest.empty() && !continueSum) {
         // print the result of a nested operation
         printNext = false;
         assembly << "STORE TEMP" << ++numOfTempVars << "\n"
                  << "WRITE TEMP" << numOfTempVars << "\n";
-    }
-    else {
-        // assembly << "\t token list empty?" << tokenList.empty() << "\n";
-        // assembly << "\t print next?" << printNext << "\n";
-        // assembly << "\t add Nest empty?" << addNest.empty() << "\n";
-        assembly << "\t sum?" << sumCalculated << "\n";
     }
 
     // handle loop returns
