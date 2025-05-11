@@ -233,13 +233,20 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
     else if (root->label == "t3") {
         // handle operations that involve integers
 
-        // decide if t3 integer is positive or negative by checking if the first letter is uppercase
-        char firstChar = tokenList.back()[0];
-        if (tokenList.back().length() >= 3 && tokenList.back()[1] == '0' && tokenList.back()[2] == '0') {
-            // tokens proceeded by at least two zeroes represent zero
-            tokenList.back() = "0";
+        // decide if t3 integer is zero, positive, or negative by checking if the first letter is uppercase
+        if (tokenList.back()[1] == '0') {
+            // tokens proceeded by one or more zeroes
+            for (int i = 0; i < tokenList.back().length(); i++) {
+                if (tokenList.back()[i] != '0') {
+                    break;
+                }
+                if (i == tokenList.back().length() - 1) {
+                    tokenList.back() = "0";
+                }
+            }
         }
-        else if (firstChar >= 'a' && firstChar <= 'z') {
+        char firstChar = tokenList.back()[0];
+        if (firstChar >= 'a' && firstChar <= 'z') {
             // negative integer
             tokenList.back().replace(0, 1, "-");
         }
