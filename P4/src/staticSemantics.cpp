@@ -24,6 +24,7 @@ int backtrace = 0;  // used to return through a loop. holds the value of the loo
 bool declareVariable = false;  // flag used to check if variable is being declared or used
 bool printNext = false;  // used when operations are nested inside the WRITE operator
 bool continueSum = false;  //  used to ensure accumulator isn't overwritten during nested addition
+bool sumCalculated = false;  // flag that is checked when sum is calculated before nested addition is looked at
 bool negateNext = false;  // used to negate the result of a sum or several sums
 std::string assignTo = "";  // used to store an identifier where the result of the next operation is assigned
 std::vector<std::string> tokenList;  // keeps track of previous tokens. Used for sums, assignments, and loops mostly
@@ -33,6 +34,9 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
     // modified from previous printTree function in testTree
     // uses preorder traversal to verify static semantics of parse tree
     // while simultaneously generating the related assembly code
+
+    // reset sumCalculated
+    sumCalculated = false;
 
     // keep track of the tokens until we know what to do with them
     if (root->label == "t1" || root->label == "t2" || root->label == "t3") {
@@ -97,11 +101,13 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                 // e.g. & & x13 a13 +14 -> The sum of (the sum of two numbers) and a single number
                 // store the first addition operator in the stack
                 addNest.push(tokenList.front());
+                assembly << "\tPushing104 " << addNest.top() << " to add nest. size: " << addNest.size() << "\n";
                 tokenList.erase(tokenList.begin(), tokenList.begin() + 1);
             }
             else {
                 // e.g. & x13 & a13 +14 -> The sum of a number and (the sum of two numbers)
                 addNest.push(tokenList[1]);
+                assembly << "\tPushing110 " << addNest.top() << " to add nest. size: " << addNest.size() << "\n";
                 // remove the first two elements of tokenList since they're stored
                 tokenList.erase(tokenList.begin(), tokenList.begin() + 2);
             }
@@ -183,6 +189,8 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                 }
                 // reset token list
                 tokenList.clear();
+                // set the flag for calculating sum
+                sumCalculated = true;
             }
             else if (tokenList.size() == 1 && !assignTo.empty()) {
                 // assign the value of this variable to the variable stored in assignTo
@@ -231,7 +239,6 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                     tokenList.clear();//todoTODO
                     tokenList.push_back("\'");
                 }
-                // assembly << "\tLoopargs: " << loopArgs << "\n";
             }
         }
     }
@@ -299,6 +306,8 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             }
             // reset token list
             tokenList.clear();
+            // set flag for calculating sum
+            sumCalculated = true;
         }
         else if (tokenList.front() == "$" && tokenList.size() == 2) {
             // if the number is alone with a write operator, write to the screen
@@ -354,7 +363,6 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
                 tokenList.clear();//todoTODO
                 tokenList.push_back("\'");
             }
-            // assembly << "\tLoopargs: " << loopArgs << "\n";
         }
     }
 
@@ -364,6 +372,7 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         if (!tokenList.empty() && addNest.top() == "&" && tokenList.front() != "&") {
             // if two addition ops were back to back, store the result of the rightmost
             // operation in a temp variable, then add them to the token vector
+            assembly << "\tPopping375 " << addNest.top() << " from add nest. size: " << addNest.size() - 1 << "\n";
             addNest.pop();
             assembly << "ADD " << tokenList.front() << "\n";
             tokenList.clear();
@@ -372,15 +381,23 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
             // if an integer or identifier was wedged between two additions, just add it to
             // the current result
             assembly << "ADD " << addNest.top() << "\n";
+            assembly << "\tPopping384 " << addNest.top() << " from add nest. size: " << addNest.size() - 1 << "\n";
             addNest.pop();
         }
         else {
             // if neither of these can happen, break out of the infinite loop
+            if (sumCalculated) {
+                assembly << "\tSum calc was true\n";
+                sumCalculated = false;
+                continueSum = true;
+            }
             break;
         }
         // if an operation goes through, make sure the accumulator isn't overwritten
-        if (!addNest.empty()) {
+        if (!addNest.empty() && addNest.top() == "&" && sumCalculated) {
             continueSum = true;
+            assembly << "\tPopping399 " << addNest.top() << " from add nest. size: " << addNest.size() - 1 << "\n";
+            addNest.pop();
         }
         else {
             continueSum = false;
@@ -425,11 +442,17 @@ bool checkStaticSemantics(node_t * root, std::ofstream& assembly) {
         assembly << "MULT -1" << "\n";
     }
 
-    if (printNext && tokenList.empty() && addNest.empty()) {
+    if (printNext && tokenList.empty() && addNest.empty() && !sumCalculated) {
         // print the result of a nested operation
         printNext = false;
         assembly << "STORE TEMP" << ++numOfTempVars << "\n"
                  << "WRITE TEMP" << numOfTempVars << "\n";
+    }
+    else {
+        // assembly << "\t token list empty?" << tokenList.empty() << "\n";
+        // assembly << "\t print next?" << printNext << "\n";
+        // assembly << "\t add Nest empty?" << addNest.empty() << "\n";
+        assembly << "\t sum?" << sumCalculated << "\n";
     }
 
     // handle loop returns
