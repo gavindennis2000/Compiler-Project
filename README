@@ -1,0 +1,5 @@
+Compilers project for CS 4280
+
+2025/05/19 - Changed to read-only as the final project has been completed and submitted.
+
+P4 is the final comprehensive project and demonstrates a scanner, parser, static semantics checker, and assembly code generator.
